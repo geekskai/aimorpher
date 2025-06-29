@@ -1,4 +1,4 @@
-<a href="https://www.self.so">
+<a href="https://www.aimorpher.com">
   <img alt="Self" src="./public/og.png">
   <h1 align="center">Self</h1>
 </a>

@@ -22,7 +22,7 @@ export function Footer() {
         </div>
 
         <div className="flex gap-2">
-          <a
+          {/* <a
             target="_blank"
             rel="noopener noreferrer"
             href="https://github.com/Nutlope/self.so"
@@ -30,7 +30,7 @@ export function Footer() {
           >
             <img src="/footer/github.svg" className="size-4" />
             <span className="sr-only">GitHub</span>
-          </a>
+          </a> */}
           <a
             target="_blank"
             rel="noopener noreferrer"

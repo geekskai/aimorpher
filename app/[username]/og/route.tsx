@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const name = resume?.resumeData?.header?.name;
     const role = resume?.resumeData?.header?.shortAbout;
     const location = resume?.resumeData?.header?.location;
-    const website = `www.self.so/${username}`;
+    const website = `www.aimorpher.com/${username}`;
 
     // Use profile image from Clerk user
     const profileImageUrl = clerkUser?.imageUrl;
@@ -50,8 +50,8 @@ export async function GET(request: NextRequest) {
           >
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img
-                src="https://self.so/logo.svg"
-                alt="Self.so Logo"
+                src="https://aimorpher.com/logo.svg"
+                alt="aimorpher.com Logo"
                 style={{
                   width: '144px',
                   height: '46px',
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
       {
         width: 1200,
         height: 630,
-      },
+      }
     );
   } catch (e: any) {
     console.log(`${e.message}`);

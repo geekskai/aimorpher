@@ -8,7 +8,7 @@ const togetherai = createTogetherAI({
   baseURL: 'https://together.helicone.ai/v1',
   headers: {
     'Helicone-Auth': `Bearer ${process.env.HELICONE_API_KEY}`,
-    'Helicone-Property-AppName': 'self.so',
+    'Helicone-Property-AppName': 'aimorpher.com',
   },
 });
 

@@ -7,7 +7,11 @@ export function TopMenu() {
     <>
       <header className="w-full py-4 md:px-0 px-6 flex justify-between items-center max-w-4xl mx-auto h-[67px]">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logo.svg" alt="Self.so Logo" className="h-[30px] w-auto" />
+          <img
+            src="/logo.svg"
+            alt="aimorpher.com Logo"
+            className="h-[30px] w-auto"
+          />
         </Link>
 
         <div>
@@ -17,8 +21,8 @@ export function TopMenu() {
           </SignedIn>
           <SignedOut>
             <div className="flex flex-row gap-3 font-mono ">
-              <a
-                href="https://github.com/nutlope/self.so"
+              {/* <a
+                href="https://github.com/nutlope/aimorpher.com"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -33,7 +37,7 @@ export function TopMenu() {
                   />
                   <span>Github</span>
                 </Button>
-              </a>
+              </a> */}
               <Link href="/upload">
                 <Button
                   variant="default"
