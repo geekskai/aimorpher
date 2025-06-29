@@ -21,6 +21,7 @@ export function useR2Upload() {
       const response = await fetch('/api/r2-upload', {
         method: 'POST',
         body: formData,
+        cache: 'no-store',
       });
 
       if (!response.ok) {
