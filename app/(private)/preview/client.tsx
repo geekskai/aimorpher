@@ -45,7 +45,7 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
     }
   }, [resumeQuery.data?.resume?.resumeData]);
 
-  console.log('resumeQuery', resumeQuery.data);
+  
 
   const handleSaveChanges = async () => {
     if (!localResumeData) {

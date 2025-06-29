@@ -16,15 +16,11 @@ export const deleteS3File = async ({
   key: string;
 }) => {
   const s3 = new AWS.S3();
-  const bucketName = process.env.S3_BUCKET_NAME;
+  // const bucketName = process.env.S3_BUCKET_NAME;
 
   const params = { Bucket: bucket, Key: key };
 
-  console.log(`Deleting file ${key} from S3.`);
-
   await s3.deleteObject(params).promise();
-
-  console.log(`File ${key} deleted from S3.`);
 
   return { success: true };
 };

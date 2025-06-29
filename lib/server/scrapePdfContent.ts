@@ -1,14 +1,4 @@
-// import { pdfToText } from 'pdf-ts';
 
-// export async function scrapePdfContent(pdfUrl: string) {
-//   console.log(`🚀 ~ pdfUrl:`, pdfUrl);
-//   const pdfFetch = await fetch(pdfUrl);
-//   const pdf = await pdfFetch.arrayBuffer();
-//   const text = await pdfToText(new Uint8Array(pdf));
-//   console.log(`🚀 ~ text:`, text);
-
-//   return text;
-// }
 
 import { pdfToText } from 'pdf-ts';
 import AWS from 'aws-sdk';
@@ -23,8 +13,6 @@ AWS.config.update({
 });
 
 export async function scrapePdfContent(pdfUrl: string) {
-  console.log(`🚀 ~ pdfUrl:`, pdfUrl);
-
   try {
     // Extract bucket and key from the S3 URL
     const urlParts = pdfUrl.match(
@@ -37,8 +25,6 @@ export async function scrapePdfContent(pdfUrl: string) {
     const bucket = urlParts[1];
     const key = decodeURIComponent(urlParts[3]);
 
-    console.log(`🚀 ~ bucket: ${bucket}, key: ${key}`);
-
     // Create S3 instance
     const s3 = new AWS.S3();
 
@@ -48,8 +34,6 @@ export async function scrapePdfContent(pdfUrl: string) {
       Key: key,
       Expires: 3600, // 1 hour
     });
-
-    console.log(`🚀 ~ presignedUrl generated`);
 
     // Fetch the PDF using the presigned URL
     const pdfFetch = await fetch(presignedUrl);
@@ -62,7 +46,6 @@ export async function scrapePdfContent(pdfUrl: string) {
 
     const pdf = await pdfFetch.arrayBuffer();
     const text = await pdfToText(new Uint8Array(pdf));
-    console.log(`🚀 ~ text:`, text);
 
     return text;
   } catch (error) {
