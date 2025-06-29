@@ -21,8 +21,8 @@ export function TopMenu() {
           </SignedIn>
           <SignedOut>
             <div className="flex flex-row gap-3 font-mono ">
-              {/* <a
-                href="https://github.com/nutlope/aimorpher.com"
+              <a
+                href="https://github.com/geekskai/aimorpher"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -37,7 +37,7 @@ export function TopMenu() {
                   />
                   <span>Github</span>
                 </Button>
-              </a> */}
+              </a>
               <Link href="/upload">
                 <Button
                   variant="default"

@@ -22,19 +22,19 @@ export function Footer() {
         </div>
 
         <div className="flex gap-2">
-          {/* <a
+          <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://github.com/Nutlope/self.so"
+            href="https://github.com/geekskai/aimorpher"
             className="size-6 flex items-center justify-center border-design-gray border rounded-md"
           >
             <img src="/footer/github.svg" className="size-4" />
             <span className="sr-only">GitHub</span>
-          </a> */}
+          </a>
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://x.com/nutlope"
+            href="https://x.com/KaiGeeks"
             className="size-6 flex items-center justify-center border-design-gray border rounded-md"
           >
             <img src="/footer/x.svg" className="size-4" />
