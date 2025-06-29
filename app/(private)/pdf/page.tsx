@@ -8,6 +8,7 @@ import { deleteS3File } from '@/lib/server/deleteS3File';
 
 async function PdfProcessing({ userId }: { userId: string }) {
   const resume = await getResume(userId);
+  console.log(`🚀 ~ resume:`, resume);
 
   if (!resume || !resume.file || !resume.file.url) redirect('/upload');
 
@@ -46,6 +47,7 @@ async function PdfProcessing({ userId }: { userId: string }) {
 
 export default async function Pdf() {
   const { userId, redirectToSignIn } = await auth();
+  console.log(`🚀 ~ userId:`, userId);
 
   if (!userId) return redirectToSignIn();
 
