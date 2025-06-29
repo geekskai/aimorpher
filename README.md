@@ -1,11 +1,112 @@
 <a href="https://www.aimorpher.com">
-  <img alt="Self" src="./public/og.png">
-  <h1 align="center">Self</h1>
+  <img alt="aimorpher.com" src="./public/og.png">
+  <h1 align="center">aimorpher.com</h1>
 </a>
 
 <p align="center">
-  An open source personal site builder. Powered by Together.ai.
+  Turn your resume into a professional website in seconds. Powered by Together.ai & Llama 3.3.
 </p>
+
+<p align="center">
+  <a href="#english">English</a> | <a href="#chinese">中文</a>
+</p>
+
+---
+
+## English
+
+### 🚀 Features
+
+- **One-Click Conversion**: Upload your LinkedIn PDF or resume and get a professional website instantly
+- **AI-Powered**: Uses Together.ai's Llama 3.3 for intelligent content extraction
+- **Real-time Editing**: Edit your resume content with live preview
+- **Custom URLs**: Get your personalized URL (e.g., aimorpher.com/yourname)
+- **Responsive Design**: Looks great on all devices
+- **SEO Optimized**: Built-in SEO with Open Graph support
+- **100% Free & Open Source**: No hidden costs, fully open source
+
+### 🛠 Tech Stack
+
+- **AI/LLM**: Together.ai with Llama 3.3 for content extraction
+- **Framework**: Next.js 14 with App Router
+- **Authentication**: Clerk for user management
+- **Database**: Upstash Redis for data storage
+- **File Storage**: Cloudflare R2 for PDF storage
+- **Styling**: Tailwind CSS + shadcn/ui components
+- **Deployment**: Vercel for hosting
+- **Analytics**: Plausible (optional)
+
+### 🎯 How It Works
+
+1. **Sign Up**: Create an account with Clerk authentication
+2. **Upload**: Upload your LinkedIn PDF or resume (supports PDF format only)
+3. **AI Processing**: Llama 3.3 extracts and structures your information
+4. **Customize**: Edit and customize your content with real-time preview
+5. **Publish**: Get your personalized website URL and share it with the world
+
+### 🚀 Quick Start
+
+#### Prerequisites
+
+- Node.js 18+ and pnpm
+- Together.ai account for AI processing
+- Upstash Redis database
+- Cloudflare R2 bucket for file storage
+- Clerk account for authentication
+
+#### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/geekskai/aimorpher.git
+   cd aimorpher
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Fill in your API keys:
+
+   ```env
+   # Together.ai
+   TOGETHER_API_KEY=your_together_api_key
+
+   # Upstash Redis
+   UPSTASH_REDIS_REST_URL=your_redis_url
+   UPSTASH_REDIS_REST_TOKEN=your_redis_token
+
+   # Cloudflare R2
+   R2_ACCOUNT_ID=your_r2_account_id
+   R2_ACCESS_KEY_ID=your_r2_access_key
+   R2_SECRET_ACCESS_KEY=your_r2_secret_key
+   R2_BUCKET_NAME=your_bucket_name
+   R2_ENDPOINT=your_r2_endpoint
+
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   ```
+
+4. **Run the development server**
+
+   ```bash
+   pnpm dev
+   ```
+
+5. **Open your browser**
+   Navigate to `http://localhost:3000`
+
+### 📁 Project Structure
 
 ## Tech stack
 
