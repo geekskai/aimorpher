@@ -1,41 +1,31 @@
-
-
 import { pdfToText } from 'pdf-ts';
-import AWS from 'aws-sdk';
-
-// Configure AWS (reuse the same configuration as deleteS3File.ts)
-AWS.config.update({
-  region: process.env.S3_UPLOAD_REGION!!,
-  credentials: {
-    accessKeyId: process.env.S3_UPLOAD_KEY!!,
-    secretAccessKey: process.env.S3_UPLOAD_SECRET!!,
-  },
-});
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { r2Client } from './r2Client';
 
 export async function scrapePdfContent(pdfUrl: string) {
   try {
-    // Extract bucket and key from the S3 URL
+    // 从R2 URL中提取key
     const urlParts = pdfUrl.match(
-      /https:\/\/(.+?)\.s3\.(.+?)\.amazonaws\.com\/(.+)/
+      /https:\/\/(.+?)\.r2\.cloudflarestorage\.com\/(.+)/
     );
     if (!urlParts) {
-      throw new Error('Invalid S3 URL format');
+      throw new Error('Invalid R2 URL format');
     }
 
-    const bucket = urlParts[1];
-    const key = decodeURIComponent(urlParts[3]);
+    const key = decodeURIComponent(urlParts[2]);
 
-    // Create S3 instance
-    const s3 = new AWS.S3();
-
-    // Generate presigned URL for temporary access (expires in 1 hour)
-    const presignedUrl = s3.getSignedUrl('getObject', {
-      Bucket: bucket,
+    // 创建预签名URL用于临时访问（1小时过期）
+    const command = new GetObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME!,
       Key: key,
-      Expires: 3600, // 1 hour
     });
 
-    // Fetch the PDF using the presigned URL
+    const presignedUrl = await getSignedUrl(r2Client, command, {
+      expiresIn: 3600, // 1小时
+    });
+
+    // 使用预签名URL获取PDF
     const pdfFetch = await fetch(presignedUrl);
 
     if (!pdfFetch.ok) {

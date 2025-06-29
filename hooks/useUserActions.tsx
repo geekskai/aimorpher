@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Resume, ResumeData } from '@/lib/server/redisActions';
-import { useS3Upload } from 'next-s3-upload';
+import { useR2Upload } from './useR2Upload';
 import { PublishStatuses } from '@/components/PreviewActionbar';
 import { ResumeDataSchema } from '@/lib/resume';
 
@@ -47,7 +47,7 @@ const checkUsernameAvailability = async (
 
 export function useUserActions() {
   const queryClient = useQueryClient();
-  const { uploadToS3 } = useS3Upload();
+  const { uploadToR2 } = useR2Upload();
 
   // Query for fetching resume data
   const resumeQuery = useQuery({
@@ -96,15 +96,15 @@ export function useUserActions() {
 
   // Update resume data in Upstash
   const uploadFileResume = async (file: File) => {
-    const fileOnS3 = await uploadToS3(file);
+    const fileOnR2 = await uploadToR2(file);
 
     const newResume: Resume = {
       file: {
         name: file.name,
-        url: fileOnS3.url,
+        url: fileOnR2.url,
         size: file.size,
-        bucket: fileOnS3.bucket,
-        key: fileOnS3.key,
+        bucket: fileOnR2.bucket,
+        key: fileOnR2.key,
       },
       resumeData: undefined,
       status: 'draft',

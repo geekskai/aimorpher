@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import LoadingFallback from '../../../components/LoadingFallback';
 import { scrapePdfContent } from '@/lib/server/scrapePdfContent';
-import { deleteS3File } from '@/lib/server/deleteS3File';
+import { deleteR2File } from '@/lib/server/deleteR2File';
 
 async function PdfProcessing({ userId }: { userId: string }) {
   const resume = await getResume(userId);
@@ -14,12 +14,11 @@ async function PdfProcessing({ userId }: { userId: string }) {
   if (!resume.fileContent) {
     const fileContent = await scrapePdfContent(resume?.file.url);
 
-    // check if the fileContent was good or bad, if bad we redirect to the upload page and delete the object from S3 and redis
+    // check if the fileContent was good or bad, if bad we redirect to the upload page and delete the object from R2 and redis
     const isContentBad = false; // await isFileContentBad(fileContent);
 
     if (isContentBad) {
-      await deleteS3File({
-        bucket: resume.file.bucket,
+      await deleteR2File({
         key: resume.file.key,
       });
 
@@ -46,7 +45,6 @@ async function PdfProcessing({ userId }: { userId: string }) {
 
 export default async function Pdf() {
   const { userId, redirectToSignIn } = await auth();
-  
 
   if (!userId) return redirectToSignIn();
 
