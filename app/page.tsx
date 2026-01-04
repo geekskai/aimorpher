@@ -21,6 +21,10 @@ export default function Home() {
                   100% free & open source
                 </div>
 
+                <a href=" " target="_blank" rel="noopener noreferrer"> 
+                  <img src="https://img.aitoolshood.com/8f8751eebc084fc5a3006212f97ebd5a.png" alt="aitoolshood.com" style="height: 54px; width: auto;"/>
+                </a>
+
                 <h1 className="text-[32px] font-bold mb-4 flex items-center justify-center md:justify-start gap-4 flex-wrap text-design-black font-mono leading-4">
                   <span>LinkedIn</span>
                   <img
