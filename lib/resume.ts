@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
 const HeaderContactsSchema = z.object({
-  website: z.string().describe('Personal website or portfolio URL').optional(),
-  email: z.string().describe('Email address').optional(),
-  phone: z.string().describe('Phone number').optional(),
-  twitter: z.string().describe('Twitter/X username').optional(),
-  linkedin: z.string().describe('LinkedIn username').optional(),
-  github: z.string().describe('GitHub username').optional(),
+  website: z.string().nullable().describe('Personal website or portfolio URL').optional(),
+  email: z.string().nullable().describe('Email address').optional(),
+  phone: z.string().nullable().describe('Phone number').optional(),
+  twitter: z.string().nullable().describe('Twitter/X username').optional(),
+  linkedin: z.string().nullable().describe('LinkedIn username').optional(),
+  github: z.string().nullable().describe('GitHub username').optional(),
 });
 
 const HeaderSection = z.object({
@@ -27,7 +27,7 @@ const SummarySection = z.string().describe('Summary of your profile');
 const WorkExperienceSection = z.array(
   z.object({
     company: z.string().describe('Company name'),
-    link: z.string().describe('Company website URL'),
+     link: z.string().optional().describe('Company website URL'),
     location: z
       .string()
       .describe(
@@ -38,11 +38,10 @@ const WorkExperienceSection = z.array(
       .describe('Type of work contract like Full-time, Part-time, Contract'),
     title: z.string().describe('Job title'),
     start: z.string().describe("Start date in format 'YYYY-MM-DD'"),
-    end: z
-      .string()
-      .optional()
-      .nullable()
-      .describe("End date in format 'YYYY-MM-DD'"),
+     end: z
+       .string()
+       .nullable()
+       .describe("End date in format 'YYYY-MM-DD' or null if current"),
     description: z.string().describe('Job description'),
   })
 );

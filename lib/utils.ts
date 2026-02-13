@@ -12,3 +12,5 @@ export function getSelfSoUrl(username: string) {
       : 'https://aimorpher.com';
   return `${domain}/${username}`;
 }
+
+export const TOGETHER_LINK = 'https://togetherai.link/?utm_source=selfso&utm_medium=referral&utm_campaign=example-app';

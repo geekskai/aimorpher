@@ -5,7 +5,7 @@ const isPrivateRoute = createRouteMatcher(
   PRIVATE_ROUTES.map((route) => `/${route}`),
 );
 
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth: any, req: any) => {
   // Protect all private routes - require authentication
   if (isPrivateRoute(req)) {
     await auth.protect();
