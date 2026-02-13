@@ -29,7 +29,7 @@
 
 - **AI/LLM**: Together.ai with Llama 3.3 for content extraction
 - **Framework**: Next.js 14 with App Router
-- **Authentication**: Clerk for user management
+- **Authentication**: Clerk for user management geekskai666
 - **Database**: Upstash Redis for data storage
 - **File Storage**: Cloudflare R2 for PDF storage
 - **Styling**: Tailwind CSS + shadcn/ui components

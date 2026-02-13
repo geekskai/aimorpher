@@ -27,7 +27,7 @@
 
 - **AI/大语言模型**：Together.ai + Llama 3.3 用于内容提取
 - **前端框架**：Next.js 14 with App Router
-- **身份验证**：Clerk 用户管理系统
+- **身份验证**：Clerk 用户管理系统 geekskai666
 - **数据库**：Upstash Redis 数据存储
 - **文件存储**：Cloudflare R2 PDF 存储
 - **UI 样式**：Tailwind CSS + shadcn/ui 组件库
