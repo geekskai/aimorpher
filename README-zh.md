@@ -1,5 +1,5 @@
 <a href="https://www.aimorpher.com">
-  <img alt="aimorpher.com" src="https://aimorpher.com/opengraph-image">
+  <img alt="aimorpher.com" src="https://www.aimorpher.com/opengraph-image">
   <h1 align="center">aimorpher.com</h1>
 </a>
 

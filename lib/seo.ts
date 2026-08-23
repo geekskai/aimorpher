@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import type { ResumeDataSchemaType } from '@/lib/resume';
 
-export const SITE_URL = 'https://aimorpher.com';
+export const SITE_URL = 'https://www.aimorpher.com';
 
 export const INDEXABLE_STATIC_PATHS = [
   '',

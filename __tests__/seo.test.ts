@@ -34,18 +34,18 @@ describe('SEO foundations', () => {
     const urls = entries.map(({ url }) => url);
 
     expect(urls.slice(0, INDEXABLE_STATIC_PATHS.length)).toEqual([
-      'https://aimorpher.com/',
-      'https://aimorpher.com/pricing',
-      'https://aimorpher.com/sample',
-      'https://aimorpher.com/about',
-      'https://aimorpher.com/contact',
-      'https://aimorpher.com/terms',
-      'https://aimorpher.com/privacy',
-      'https://aimorpher.com/refund-policy',
+      'https://www.aimorpher.com/',
+      'https://www.aimorpher.com/pricing',
+      'https://www.aimorpher.com/sample',
+      'https://www.aimorpher.com/about',
+      'https://www.aimorpher.com/contact',
+      'https://www.aimorpher.com/terms',
+      'https://www.aimorpher.com/privacy',
+      'https://www.aimorpher.com/refund-policy',
     ]);
     expect(urls.slice(INDEXABLE_STATIC_PATHS.length)).toEqual([
-      'https://aimorpher.com/alex',
-      'https://aimorpher.com/zoe',
+      'https://www.aimorpher.com/alex',
+      'https://www.aimorpher.com/zoe',
     ]);
     expect(urls.some((url) => /upload|preview|pdf|api/.test(url))).toBe(false);
   });
@@ -97,7 +97,7 @@ describe('SEO foundations', () => {
 
     expect(publicSchema).toMatchObject({
       '@type': 'ProfilePage',
-      url: 'https://aimorpher.com/alex',
+      url: 'https://www.aimorpher.com/alex',
       mainEntity: {
         '@type': 'Person',
         email: 'mailto:alex@example.com',
@@ -122,10 +122,10 @@ describe('SEO foundations', () => {
 
     expect(contactSchema).toMatchObject({
       '@type': 'ContactPage',
-      url: 'https://aimorpher.com/contact',
+      url: 'https://www.aimorpher.com/contact',
       mainEntity: { email: 'support@aimorpher.com' },
     });
-    expect(robots).toContain('Sitemap: https://aimorpher.com/sitemap.xml');
+    expect(robots).toContain('Sitemap: https://www.aimorpher.com/sitemap.xml');
     expect(robots).toContain('Disallow: /upload');
     expect(robots).toContain('Disallow: /api/');
   });

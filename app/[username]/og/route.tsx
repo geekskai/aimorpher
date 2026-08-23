@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
           >
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img
-                src="https://aimorpher.com/logo.svg"
+                src="https://www.aimorpher.com/logo.svg"
                 alt="aimorpher.com Logo"
                 style={{
                   width: '144px',

@@ -7,7 +7,7 @@ import { Metadata } from 'next';
 import PlausibleProvider from 'next-plausible';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://aimorpher.com'),
+  metadataBase: new URL('https://www.aimorpher.com'),
   title: {
     default: 'Resume Website Builder for Developers | Aimorpher',
     template: '%s | Aimorpher',

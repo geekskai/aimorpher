@@ -5,4 +5,4 @@ Disallow: /upload
 Disallow: /pdf
 Disallow: /api/
 
-Sitemap: https://aimorpher.com/sitemap.xml
+Sitemap: https://www.aimorpher.com/sitemap.xml
