@@ -15,12 +15,11 @@ export function TopMenu() {
         </Link>
 
         <div className="flex items-center gap-4">
-          <Link
-            href="/pricing"
-            className="hidden text-sm font-medium text-design-gray hover:text-design-black sm:inline"
-          >
-            Pricing
-          </Link>
+          <nav className="hidden items-center gap-4 text-sm font-medium text-design-gray md:flex" aria-label="Primary navigation">
+            <Link href="/sample" className="hover:text-design-black">Sample</Link>
+            <Link href="/pricing" className="hover:text-design-black">Pricing</Link>
+            <Link href="/about" className="hover:text-design-black">About</Link>
+          </nav>
           <SignedIn>
             {/* User is signed in */}
             <UserButton />

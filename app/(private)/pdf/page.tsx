@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import ProcessingStatus from '@/components/ProcessingStatus';
 import { scrapePdfContent } from '@/lib/server/scrapePdfContent';
 import { deleteR2File } from '@/lib/server/deleteR2File';
+import { isFileContentBad } from '@/lib/server/ai/isFileContentBad';
 
 async function PdfProcessing({ userId }: { userId: string }) {
   const resume = await getResume(userId);
@@ -14,8 +15,7 @@ async function PdfProcessing({ userId }: { userId: string }) {
   if (!resume.fileContent) {
     const fileContent = await scrapePdfContent(resume?.file.url);
 
-    // check if the fileContent was good or bad, if bad we redirect to the upload page and delete the object from R2 and redis
-    const isContentBad = false; // await isFileContentBad(fileContent);
+    const isContentBad = await isFileContentBad(fileContent);
 
     if (isContentBad) {
       await deleteR2File({
@@ -29,7 +29,7 @@ async function PdfProcessing({ userId }: { userId: string }) {
         resumeData: null,
       });
 
-      redirect('/upload');
+      redirect('/upload?error=unreadablePdf');
     }
 
     await storeResume(userId, {

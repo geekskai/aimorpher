@@ -24,6 +24,7 @@ export function ProfileLinks({
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={`${link.label} (${link.kind})`}
             className="group flex min-h-12 items-center justify-between rounded-lg border border-neutral-200 bg-white/80 px-4 py-3 text-sm font-semibold text-[#050914] transition-colors hover:border-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#050914]"
           >
             <span>

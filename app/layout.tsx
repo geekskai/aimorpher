@@ -8,10 +8,25 @@ import PlausibleProvider from 'next-plausible';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://aimorpher.com'),
-  title: 'Aimorpher - Resume to Professional Website',
+  title: {
+    default: 'Resume Website Builder for Developers | Aimorpher',
+    template: '%s | Aimorpher',
+  },
   description:
-    'Turn your resume, GitHub, and best projects into a professional website built for technical hiring.',
+    'Turn a PDF resume into an editable professional website for technical hiring. Review every detail, publish free, and share one polished link.',
   openGraph: {
+    type: 'website',
+    siteName: 'Aimorpher',
+    title: 'Resume Website Builder for Developers | Aimorpher',
+    description:
+      'Turn a PDF resume into an editable professional website for technical hiring.',
+    images: '/opengraph-image',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Resume Website Builder for Developers | Aimorpher',
+    description:
+      'Turn a PDF resume into an editable professional website for technical hiring.',
     images: '/opengraph-image',
   },
 };

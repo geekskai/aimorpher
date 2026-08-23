@@ -1,7 +1,7 @@
 import { upstashRedis } from '@/lib/server/redis';
 import { ResumeDataSchema } from '@/lib/resume';
 import { z } from 'zod';
-import { PRIVATE_ROUTES } from '../routes';
+import { RESERVED_USERNAMES } from '../routes';
 import { getBillingAccount } from '@/lib/billing/repository';
 import { resolvePlan } from '@/lib/billing/entitlements';
 import { PlanIdSchema, type PlanId } from '@/lib/billing/types';
@@ -23,7 +23,7 @@ const FileSchema = z.object({
   key: z.string(),
 });
 
-const FORBIDDEN_USERNAMES = PRIVATE_ROUTES;
+const FORBIDDEN_USERNAMES: readonly string[] = RESERVED_USERNAMES;
 
 // Define the complete resume schema
 export const AccountPlanSchema = PlanIdSchema;

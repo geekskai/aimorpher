@@ -26,7 +26,7 @@ export default function OpenGraphImage() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: 72, fontWeight: 800, letterSpacing: '-4px' }}>
-            Your resume is the source.
+            Turn your resume into
           </div>
           <div
             style={{
@@ -37,11 +37,11 @@ export default function OpenGraphImage() {
               color: '#315efb',
             }}
           >
-            Your profile is the deploy.
+            a professional website.
           </div>
         </div>
         <div style={{ display: 'flex', gap: 34, fontSize: 22, color: '#596170' }}>
-          <span>Resume + GitHub</span>
+          <span>PDF resume import</span>
           <span>Private draft first</span>
           <span>Built for technical hiring</span>
         </div>

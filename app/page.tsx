@@ -13,6 +13,24 @@ import {
   Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { buildHomeJsonLd, serializeJsonLd } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Resume Website Builder for Developers',
+  description:
+    'Turn a PDF resume into an editable professional website for technical hiring. Review every detail, publish free, and share one polished profile link.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    siteName: 'Aimorpher',
+    url: '/',
+    title: 'Resume Website Builder for Developers | Aimorpher',
+    description:
+      'Turn a PDF resume into an editable professional website for technical hiring.',
+    images: '/opengraph-image',
+  },
+};
 
 const buildSteps = [
   {
@@ -35,11 +53,41 @@ const buildSteps = [
 const buildLog = [
   ['resume.pdf', 'parsed'],
   ['work history', 'structured'],
-  ['GitHub + projects', 'linked'],
+  ['project links', 'detected'],
   ['contact privacy', 'reviewed'],
 ] as const;
 
+const frequentlyAskedQuestions = [
+  {
+    question: 'What file does Aimorpher accept?',
+    answer:
+      'Aimorpher accepts a PDF resume, including a PDF export of a LinkedIn profile. The file is parsed into a structured draft that you review before publishing.',
+  },
+  {
+    question: 'Can I edit the generated website?',
+    answer:
+      'Yes. You can review and edit the generated profile before it goes live. You remain responsible for checking dates, claims, links, and other details for accuracy.',
+  },
+  {
+    question: 'Does uploading a resume make it public?',
+    answer:
+      'No. Your first result is a private draft. A profile is public only after you choose to publish it, and you can control whether contact and education details are visible.',
+  },
+  {
+    question: 'What is included in the free plan?',
+    answer:
+      'The free plan lets you publish one professional profile. Pro adds job-specific profile versions, more successful AI generations, additional themes, private view analytics, and removes Aimorpher branding.',
+  },
+  {
+    question: 'Can I delete my resume and profile data?',
+    answer:
+      'Yes. You can delete the uploaded PDF and generated profile from the product. The Privacy Policy explains how resume, AI, analytics, and subscription data are processed.',
+  },
+] as const;
+
 export default function Home() {
+  const jsonLd = buildHomeJsonLd();
+
   return (
     <div className="min-h-screen bg-[#f7f8fb] text-[#0a0d12]">
       <TopMenu />
@@ -53,14 +101,15 @@ export default function Home() {
                 Built for technical job seekers
               </div>
               <h1 className="max-w-3xl font-sans text-5xl font-black leading-[0.98] tracking-[-0.055em] sm:text-6xl lg:text-7xl">
-                Your resume is the source.
+                Turn your resume into
                 <span className="mt-2 block text-[#315efb]">
-                  Your profile is the deploy.
+                  a professional website.
                 </span>
               </h1>
               <p className="mt-7 max-w-xl font-sans text-lg leading-8 text-[#596170]">
-                Turn your resume, GitHub, and best projects into a professional
-                site you can edit, publish, and send with every application.
+                Upload a PDF resume, review the structured draft, and publish a
+                professional profile with the experience, projects, and links
+                you want recruiters to see.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Button
@@ -181,6 +230,44 @@ export default function Home() {
           </ol>
         </section>
 
+        <section className="border-y border-[#dfe3ea] bg-white">
+          <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-2 lg:px-8">
+            <div>
+              <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-[#315efb]">
+                Built for a technical job search
+              </p>
+              <h2 className="mt-4 font-sans text-4xl font-black tracking-[-0.035em]">
+                A resume website that stays grounded in your experience.
+              </h2>
+              <p className="mt-5 text-base leading-7 text-[#596170]">
+                Aimorpher is designed for developers, engineers, product
+                builders, and other technical candidates who need more room
+                than a PDF gives them. It organizes the work history,
+                education, skills, projects, and links already present in your
+                resume into a profile that is easier to scan and share.
+              </p>
+              <p className="mt-4 text-base leading-7 text-[#596170]">
+                A GitHub or portfolio link can be displayed when it appears in
+                your source material or you add it during editing. Aimorpher
+                does not claim to import or analyze an entire GitHub account.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                ['Edit the draft', 'Review summaries, dates, links, projects, and skills before publishing.'],
+                ['Control visibility', 'Choose whether email, phone, location, education, and downloads appear.'],
+                ['Publish free', 'Create one public professional profile with a stable link on the Free plan.'],
+                ['Tailor with Pro', 'Create job-specific versions without replacing your primary public profile.'],
+              ].map(([title, description]) => (
+                <article key={title} className="rounded-xl border border-[#dfe3ea] bg-[#f7f8fb] p-5">
+                  <h3 className="font-sans text-lg font-bold">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#596170]">{description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="border-y border-[#dfe3ea] bg-[#eef1f6]">
           <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
             <div>
@@ -206,7 +293,51 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <section className="mx-auto max-w-4xl px-6 py-24 lg:px-8">
+          <div className="text-center">
+            <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-[#315efb]">
+              Questions before you publish
+            </p>
+            <h2 className="mt-4 font-sans text-4xl font-black tracking-[-0.035em] sm:text-5xl">
+              Resume website builder FAQ
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-[#596170]">
+              Understand the input, editing process, privacy controls, and plan
+              limits before creating your profile.
+            </p>
+          </div>
+          <div className="mt-10 divide-y divide-[#dfe3ea] border-y border-[#dfe3ea]">
+            {frequentlyAskedQuestions.map(({ question, answer }) => (
+              <details key={question} className="group py-5">
+                <summary className="cursor-pointer list-none pr-6 font-sans text-lg font-bold marker:content-none">
+                  {question}
+                </summary>
+                <p className="mt-3 max-w-3xl text-sm leading-7 text-[#596170]">{answer}</p>
+              </details>
+            ))}
+          </div>
+          <p className="mt-8 text-center text-sm text-[#596170]">
+            See the{' '}
+            <Link href="/sample" className="font-semibold text-[#0a0d12] underline underline-offset-4">
+              professional profile sample
+            </Link>
+            , compare{' '}
+            <Link href="/pricing" className="font-semibold text-[#0a0d12] underline underline-offset-4">
+              Free and Pro
+            </Link>
+            , or review the{' '}
+            <Link href="/privacy" className="font-semibold text-[#0a0d12] underline underline-offset-4">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+        </section>
       </main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       <Footer />
     </div>
   );

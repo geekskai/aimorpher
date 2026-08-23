@@ -8,6 +8,7 @@ import { getUserIdByUsername } from '@/lib/server/redisActions';
 import { getBillingAccount } from '@/lib/billing/repository';
 import { resolvePlan } from '@/lib/billing/entitlements';
 import { enforceExpiredGracePeriod } from '@/lib/billing/lifecycle';
+import { absoluteUrl } from '@/lib/seo';
 
 type Params = Promise<{ username: string; versionSlug: string }>;
 
@@ -27,10 +28,25 @@ async function getPublicProfile(username: string, versionSlug: string) {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { username, versionSlug } = await params;
   const result = await getPublicProfile(username, versionSlug);
-  if (!result) return { title: 'Profile Not Found | Aimorpher', robots: { index: false, follow: false } };
+  if (!result) return { title: 'Profile Not Found', robots: { index: false, follow: false } };
+  const title = `${result.profile.resumeData.header.name} — ${result.profile.label}`;
+  const description = result.profile.resumeData.summary;
+  const imageUrl = absoluteUrl(`/${encodeURIComponent(username)}/og`);
   return {
-    title: `${result.profile.resumeData.header.name} — ${result.profile.label} | Aimorpher`,
-    description: result.profile.resumeData.summary,
+    title,
+    description,
+    robots: { index: false, follow: true },
+    openGraph: {
+      title,
+      description,
+      images: [{ url: imageUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 

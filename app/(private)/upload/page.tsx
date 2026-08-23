@@ -10,6 +10,13 @@ export default async function UploadPage({
     <UploadPageClient
       proIntent={intent === 'pro'}
       quotaReached={error === 'aiQuotaReached'}
+      processingError={
+        error === 'unreadablePdf' ||
+        error === 'resumeGenerationFailed' ||
+        error === 'usernameCreationFailed'
+          ? error
+          : undefined
+      }
     />
   );
 }

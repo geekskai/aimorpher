@@ -38,12 +38,40 @@ type FileState =
   | { status: 'empty' }
   | { status: 'saved'; file: { name: string; url: string; size: number } };
 
+type ProcessingError =
+  | 'unreadablePdf'
+  | 'resumeGenerationFailed'
+  | 'usernameCreationFailed';
+
+const processingErrorCopy: Record<
+  ProcessingError,
+  { title: string; description: string }
+> = {
+  unreadablePdf: {
+    title: 'We could not read enough text from that PDF',
+    description:
+      'The file was removed. Export a text-based PDF and try again; scanned image-only PDFs are not supported yet.',
+  },
+  resumeGenerationFailed: {
+    title: 'We could not generate your draft',
+    description:
+      'Your uploaded PDF is still saved. Try generating again, or replace the PDF if the problem continues.',
+  },
+  usernameCreationFailed: {
+    title: 'We could not create your profile address',
+    description:
+      'Your draft is still saved. Try generating again to create an available profile address.',
+  },
+};
+
 export default function UploadPageClient({
   proIntent = false,
   quotaReached = false,
+  processingError,
 }: {
   proIntent?: boolean;
   quotaReached?: boolean;
+  processingError?: ProcessingError;
 }) {
   const router = useRouter();
   const plausible = useFunnelAnalytics();
@@ -134,6 +162,19 @@ export default function UploadPageClient({
           <a href="/pricing" className="mt-2 inline-block text-sm font-semibold underline">
             Compare plans
           </a>
+        </div>
+      ) : null}
+      {processingError ? (
+        <div
+          role="alert"
+          className="w-full max-w-[438px] rounded-lg border border-red-300 bg-red-50 p-4 text-left"
+        >
+          <p className="font-semibold text-red-950">
+            {processingErrorCopy[processingError].title}
+          </p>
+          <p className="mt-1 text-sm leading-6 text-red-900">
+            {processingErrorCopy[processingError].description}
+          </p>
         </div>
       ) : null}
       <div className="w-full max-w-[438px] text-center font-mono">

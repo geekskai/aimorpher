@@ -28,6 +28,10 @@ import { ProfileAnalyticsCard } from '@/components/ProfileAnalyticsCard';
 import { useFunnelAnalytics } from '@/hooks/useFunnelAnalytics';
 import { BillingSummaryCard } from '@/components/BillingSummaryCard';
 import { ProfileManager } from '@/components/ProfileManager';
+import {
+  getSaveErrorMessage,
+  isProfilePublishBlocked,
+} from '@/lib/profileEditorRules';
 
 export default function PreviewClient({ messageTip }: { messageTip?: string }) {
   const { user } = useUser();
@@ -71,11 +75,7 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
       setHasUnsavedChanges(false);
       setIsEditMode(false);
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(`Failed to save changes: ${error.message}`);
-      } else {
-        toast.error('Failed to save changes');
-      }
+      toast.error(getSaveErrorMessage(error));
     }
   };
 
@@ -212,7 +212,11 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
           }}
           isChangingStatus={toggleStatusMutation.isPending}
           isPublishBlocked={
-            hasUnsavedChanges || saveResumeDataMutation.isPending
+            isProfilePublishBlocked(
+              resumeQuery.data?.resume?.status,
+              hasUnsavedChanges,
+              saveResumeDataMutation.isPending,
+            )
           }
           onLinkCopied={() =>
             plausible('profile_shared', { props: { method: 'copy_link' } })

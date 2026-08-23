@@ -1,9 +1,10 @@
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { FullResume } from '@/components/resume/FullResume';
 import { Metadata } from 'next';
 import { getUserData } from './utils';
 import { ProfileViewTracker } from '@/components/ProfileViewTracker';
+import { absoluteUrl, buildProfilePageJsonLd, serializeJsonLd } from '@/lib/seo';
 
 export async function generateMetadata({
   params,
@@ -15,32 +16,47 @@ export async function generateMetadata({
 
   if (!user_id) {
     return {
-      title: 'User Not Found | aimorpher.com',
-      description: 'This user profile could not be found on aimorpher.com',
+      title: 'Profile Not Found',
+      description: 'This professional profile could not be found on Aimorpher.',
+      robots: { index: false, follow: false },
     };
   }
 
   if (!resume?.resumeData || resume.status !== 'live') {
     return {
-      title: 'Resume Not Found | aimorpher.com',
-      description: 'This resume could not be found on aimorpher.com',
+      title: 'Profile Not Found',
+      description: 'This professional profile could not be found on Aimorpher.',
+      robots: { index: false, follow: false },
     };
   }
 
+  const title = `${resume.resumeData.header.name}'s Professional Profile`;
+  const profileUrl = absoluteUrl(`/${encodeURIComponent(username)}`);
+  const imageUrl = absoluteUrl(`/${encodeURIComponent(username)}/og`);
+
   return {
-    title: `${resume.resumeData.header.name}'s Resume | aimorpher.com`,
+    title,
     description: resume.resumeData.summary,
+    alternates: { canonical: profileUrl },
     openGraph: {
-      title: `${resume.resumeData.header.name}'s Resume | aimorpher.com`,
+      type: 'profile',
+      url: profileUrl,
+      title,
       description: resume.resumeData.summary,
       images: [
         {
-          url: `https://aimorpher.com/${username}/og`,
+          url: imageUrl,
           width: 1200,
           height: 630,
-          alt: 'aimorpher.com Profile',
+          alt: `${resume.resumeData.header.name}'s Aimorpher profile`,
         },
       ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: resume.resumeData.summary,
+      images: [imageUrl],
     },
   };
 }
@@ -54,33 +70,22 @@ export default async function ProfilePage({
 
   const { user_id, resume, clerkUser } = await getUserData(username);
 
-  if (!user_id) redirect(`/?usernameNotFound=${username}`);
-  if (!resume?.resumeData || resume.status !== 'live')
-    redirect(`/?idNotFound=${user_id}`);
+  if (!user_id || !resume?.resumeData || resume.status !== 'live') notFound();
 
   const profilePicture = clerkUser?.imageUrl;
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: resume.resumeData.header.name,
-    image: profilePicture,
-    jobTitle: resume.resumeData.header.shortAbout,
-    description: resume.resumeData.summary,
-    email:
-      resume.resumeData.visibility.email &&
-      resume.resumeData.header.contacts.email &&
-      `mailto:${resume.resumeData.header.contacts.email}`,
-    url: `https://aimorpher.com/${username}`,
-    skills: resume.resumeData.header.skills,
-  };
+  const jsonLd = buildProfilePageJsonLd({
+    username,
+    resume: resume.resumeData,
+    profilePicture,
+  });
 
   return (
     <>
       <ProfileViewTracker username={username} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
 
       <FullResume resume={resume?.resumeData} profilePicture={profilePicture} />

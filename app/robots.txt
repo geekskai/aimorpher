@@ -1,4 +1,8 @@
 User-Agent: *
 Allow: /
-Disallow: /preview/
-Disallow: /upload/
+Disallow: /preview
+Disallow: /upload
+Disallow: /pdf
+Disallow: /api/
+
+Sitemap: https://aimorpher.com/sitemap.xml

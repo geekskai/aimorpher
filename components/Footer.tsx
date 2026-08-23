@@ -3,9 +3,9 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="w-full py-4 px-6  mt-auto border-t border-gray-200">
-      <div className="max-w-4xl justify-between items-center mx-auto w-full flex flex-col-reverse md:flex-row gap-2">
-        <div className="text-sm text-design-gray font-mono font-bold">
+    <footer className="mt-auto w-full border-t border-gray-200 px-6 py-6">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div className="text-center font-mono text-sm font-bold text-design-gray md:text-left">
           Powered by{' '}
           <a
             target="_blank"
@@ -17,7 +17,11 @@ export function Footer() {
           for open-model inference
         </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-3 text-xs text-design-gray" aria-label="Legal">
+        <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-design-gray" aria-label="Footer navigation">
+          <Link href="/sample">Sample</Link>
+          <Link href="/pricing">Pricing</Link>
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/refund-policy">Refunds</Link>
@@ -30,7 +34,7 @@ export function Footer() {
             href="https://github.com/geekskai/aimorpher"
             className="size-6 flex items-center justify-center border-design-gray border rounded-md"
           >
-            <img src="/footer/github.svg" className="size-4" />
+            <img src="/footer/github.svg" alt="" className="size-4" />
             <span className="sr-only">GitHub</span>
           </a>
           <a
@@ -39,7 +43,7 @@ export function Footer() {
             href="https://x.com/KaiGeeks"
             className="size-6 flex items-center justify-center border-design-gray border rounded-md"
           >
-            <img src="/footer/x.svg" className="size-4" />
+            <img src="/footer/x.svg" alt="" className="size-4" />
             <span className="sr-only">Social</span>
           </a>
         </div>

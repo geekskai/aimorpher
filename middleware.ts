@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { PRIVATE_ROUTES } from './lib/routes';
 
 const isPrivateRoute = createRouteMatcher(
-  PRIVATE_ROUTES.map((route) => `/${route}`),
+  PRIVATE_ROUTES.map((route) => `/${route}(.*)`),
 );
 const isPublicApiRoute = createRouteMatcher([
   '/api/analytics',

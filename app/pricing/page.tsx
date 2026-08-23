@@ -5,10 +5,12 @@ import { Footer } from '@/components/Footer';
 import { PLAN_DETAILS } from '@/lib/plans';
 import { Check, Minus } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
-export const metadata = {
-  title: 'Pricing | Aimorpher',
-  description: 'Build a professional profile free or unlock five profiles and 30 AI generations with Aimorpher Pro.',
+export const metadata: Metadata = {
+  title: 'Pricing',
+  description: 'Publish one professional profile free, or compare Aimorpher Pro monthly and annual plans for more profiles, themes, AI generations, and analytics.',
+  alternates: { canonical: '/pricing' },
 };
 
 export default async function PricingPage({ searchParams }: { searchParams: Promise<{ checkout?: string }> }) {
@@ -64,13 +66,13 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
             <p className="mt-2 text-sm text-white/60">or $96 billed annually</p>
             <PaidPilotLink
               billingPeriod="monthly"
-              className="mt-7 flex h-11 items-center justify-center rounded-md bg-[#315efb] font-semibold transition-colors hover:bg-[#426bff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="mt-7 flex min-h-11 w-full min-w-0 items-center justify-center whitespace-normal rounded-md bg-[#315efb] px-4 py-2 text-center font-semibold leading-tight transition-colors hover:bg-[#426bff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               Start 7-day trial
             </PaidPilotLink>
             <PaidPilotLink
               billingPeriod="annual"
-              className="mt-3 flex h-10 items-center justify-center rounded-md border border-white/25 text-sm font-semibold text-white/80 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="mt-3 flex min-h-10 w-full min-w-0 items-center justify-center whitespace-normal rounded-md border border-white/25 px-4 py-2 text-center text-sm font-semibold leading-tight text-white/80 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               Choose annual · $96/year
             </PaidPilotLink>

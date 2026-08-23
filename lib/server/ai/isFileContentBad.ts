@@ -1,27 +1,46 @@
-import { generateText } from 'ai';
-import { createTogetherAI } from '@ai-sdk/togetherai';
+export type FileContentProblem =
+  | 'empty'
+  | 'too_short'
+  | 'unreadable'
+  | 'repetitive';
 
-const togetherai = createTogetherAI({
-  apiKey: process.env.TOGETHER_API_KEY ?? '',
-  baseURL: 'https://together.helicone.ai/v1',
-  headers: {
-    'Helicone-Auth': `Bearer ${process.env.HELICONE_API_KEY}`,
-    'Helicone-Property-AppName': 'self.so',
-  },
-});
+export type FileContentAssessment =
+  | { valid: true }
+  | { valid: false; reason: FileContentProblem };
 
-export const isFileContentBad = async (fileContent: string) => {
-  // we can for now do the AI parsing here?
-  const generationResult = await generateText({
-    model: togetherai('meta-llama/Meta-Llama-Guard-3-8B'),
-    prompt: `You are given the following file content, evalute if content is harmful or spammy.
-    ${fileContent}
-    `,
-  });
+const MIN_CONTENT_LENGTH = 80;
+const MIN_READABLE_CHARACTERS = 40;
 
-  if (generationResult.text.startsWith('unsafe')) {
-    return true;
-  } else {
-    return false;
+export function assessFileContent(fileContent: string): FileContentAssessment {
+  const normalized = fileContent.normalize('NFKC').replace(/\s+/gu, ' ').trim();
+
+  if (!normalized) return { valid: false, reason: 'empty' };
+  if (normalized.length < MIN_CONTENT_LENGTH) {
+    return { valid: false, reason: 'too_short' };
   }
-};
+
+  const readableCharacters = normalized.match(/[\p{L}\p{N}]/gu)?.length ?? 0;
+  if (
+    readableCharacters < MIN_READABLE_CHARACTERS ||
+    readableCharacters / normalized.length < 0.25
+  ) {
+    return { valid: false, reason: 'unreadable' };
+  }
+
+  const tokens =
+    normalized
+      .toLocaleLowerCase()
+      .match(/[\p{L}\p{N}][\p{L}\p{N}+#.-]*/gu) ?? [];
+  if (tokens.length >= 20) {
+    const uniqueTokenRatio = new Set(tokens).size / tokens.length;
+    if (uniqueTokenRatio < 0.1) {
+      return { valid: false, reason: 'repetitive' };
+    }
+  }
+
+  return { valid: true };
+}
+
+export async function isFileContentBad(fileContent: string) {
+  return !assessFileContent(fileContent).valid;
+}
