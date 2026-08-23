@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ResumeDataSchemaType } from '@/lib/resume';
 import { useMemo } from 'react';
+import { cn } from '@/lib/utils';
 
 interface SocialButtonProps {
   href: string;
@@ -27,7 +28,7 @@ const getHostname = (url: string) => {
 
 function SocialButton({ href, icon: Icon, label }: SocialButtonProps) {
   return (
-    <Button className="size-8" variant="outline" size="icon" asChild>
+    <Button className="size-11 shrink-0" variant="outline" size="icon" asChild>
       <a
         href={
           href.startsWith('mailto:') || href.startsWith('tel:')
@@ -51,10 +52,12 @@ export function Header({
   header,
   picture,
   visibility,
+  variant = 'default',
 }: {
   header: ResumeDataSchemaType['header'];
   picture?: string;
   visibility: ResumeDataSchemaType['visibility'];
+  variant?: 'default' | 'studio';
 }) {
   const prefixUrl = (stringToFix?: string | null) => {
     if (!stringToFix) return undefined;
@@ -103,13 +106,29 @@ export function Header({
   ]);
 
   return (
-    <header className="flex items-start md:items-center justify-between gap-4 ">
-      <div className="flex-1 space-y-1.5">
-        <h1 className="text-2xl font-bold" id="resume-name">
+    <header
+      className={cn(
+        'flex items-start justify-between gap-5 md:items-center',
+        variant === 'studio' && 'md:items-end',
+      )}
+    >
+      <div className={cn('min-w-0 flex-1 space-y-1.5', variant === 'studio' && 'space-y-2')}>
+        <h1
+          className={cn(
+            'text-2xl font-bold',
+            variant === 'studio' &&
+              'font-sans text-4xl font-black tracking-[-0.045em] sm:text-5xl',
+          )}
+          id="resume-name"
+        >
           {header.name}
         </h1>
         <p
-          className="max-w-md text-pretty font-mono text-sm text-design-resume print:text-[12px]"
+          className={cn(
+            'max-w-md text-pretty font-mono text-sm text-design-resume print:text-[12px]',
+            variant === 'studio' &&
+              'max-w-xl font-sans text-base leading-7 text-[#4d5666] sm:text-lg',
+          )}
           aria-labelledby="resume-name"
         >
           {header.shortAbout}
@@ -217,7 +236,14 @@ export function Header({
         </div>
       </div>
 
-      <Avatar className="size-20 md:size-28" aria-hidden="true">
+      <Avatar
+        className={cn(
+          'size-20 md:size-28',
+          variant === 'studio' &&
+            'rounded-2xl border border-[#dfe3ea] bg-[#eef1ff] text-lg shadow-sm md:size-32',
+        )}
+        aria-hidden="true"
+      >
         <AvatarImage src={picture} alt={`${header.name}'s profile picture`} />
         <AvatarFallback>
           {header.name
