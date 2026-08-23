@@ -26,6 +26,8 @@ import {
 import { toast } from 'sonner';
 import { ProfileAnalyticsCard } from '@/components/ProfileAnalyticsCard';
 import { useFunnelAnalytics } from '@/hooks/useFunnelAnalytics';
+import { BillingSummaryCard } from '@/components/BillingSummaryCard';
+import { ProfileManager } from '@/components/ProfileManager';
 
 export default function PreviewClient({ messageTip }: { messageTip?: string }) {
   const { user } = useUser();
@@ -216,6 +218,13 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
             plausible('profile_shared', { props: { method: 'copy_link' } })
           }
         />
+      </div>
+
+      <div className="max-w-3xl mx-auto w-full md:px-0 px-4">
+        <div className="grid gap-4">
+          <BillingSummaryCard />
+          <ProfileManager username={usernameQuery.data.username} plan={resumeQuery.data?.resume?.plan ?? 'free'} />
+        </div>
       </div>
 
       <div className="max-w-3xl mx-auto w-full md:px-0 px-4">

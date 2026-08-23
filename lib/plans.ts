@@ -8,7 +8,7 @@ export const PLAN_DETAILS = {
     annualPrice: 0,
     features: [
       'One public professional profile',
-      'AI resume import and editing',
+      '3 successful AI generations every 30 days',
       'Projects and professional links',
       'Signal theme with Aimorpher branding',
     ],
@@ -18,10 +18,12 @@ export const PLAN_DETAILS = {
     monthlyPrice: 12,
     annualPrice: 96,
     features: [
+      'Up to 5 profiles for different opportunities',
+      '30 successful AI generations every 30 days',
       'All three professional themes',
       'Remove Aimorpher branding',
       'Private profile-view analytics',
-      'Custom domains and job-specific versions',
+      'Job-specific versions at your profile URL',
     ],
   },
 } as const satisfies Record<AccountPlan, object>;

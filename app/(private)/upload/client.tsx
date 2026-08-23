@@ -38,7 +38,13 @@ type FileState =
   | { status: 'empty' }
   | { status: 'saved'; file: { name: string; url: string; size: number } };
 
-export default function UploadPageClient({ proIntent = false }: { proIntent?: boolean }) {
+export default function UploadPageClient({
+  proIntent = false,
+  quotaReached = false,
+}: {
+  proIntent?: boolean;
+  quotaReached?: boolean;
+}) {
   const router = useRouter();
   const plausible = useFunnelAnalytics();
 
@@ -62,6 +68,10 @@ export default function UploadPageClient({ proIntent = false }: { proIntent?: bo
       });
     }
   }, [resume]);
+
+  useEffect(() => {
+    if (quotaReached) plausible('quota_reached', { props: { quota: 'ai_generation' } });
+  }, [plausible, quotaReached]);
 
   const handleUploadFile = async (file: File) => {
     const source = file.name.toLowerCase().includes('linkedin')
@@ -104,11 +114,26 @@ export default function UploadPageClient({ proIntent = false }: { proIntent?: bo
     <div className="flex flex-col items-center flex-1 px-4 py-12 gap-6">
       {proIntent ? (
         <div className="w-full max-w-[438px] rounded-lg border border-[#aeb9ff] bg-[#eef1ff] p-4 text-left">
-          <p className="font-semibold text-[#17204a]">You’re joining the Pro paid pilot.</p>
+          <p className="font-semibold text-[#17204a]">You selected Aimorpher Pro.</p>
           <p className="mt-1 text-sm leading-6 text-[#4d5666]">
-            Build your profile first. Billing and Pro activation are confirmed
-            personally before any charge is made.
+            Build your primary profile, then return to Pricing to open the
+            secure Creem checkout. Monthly includes a one-time 7-day trial.
           </p>
+        </div>
+      ) : null}
+      {quotaReached ? (
+        <div
+          role="alert"
+          className="w-full max-w-[438px] rounded-lg border border-amber-300 bg-amber-50 p-4 text-left"
+        >
+          <p className="font-semibold text-amber-950">AI generation limit reached</p>
+          <p className="mt-1 text-sm leading-6 text-amber-900">
+            Your uploaded PDF is still saved. Wait for the next 30-day window or
+            upgrade to Pro for 30 successful generations.
+          </p>
+          <a href="/pricing" className="mt-2 inline-block text-sm font-semibold underline">
+            Compare plans
+          </a>
         </div>
       ) : null}
       <div className="w-full max-w-[438px] text-center font-mono">

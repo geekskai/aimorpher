@@ -4,10 +4,15 @@ import { PRIVATE_ROUTES } from './lib/routes';
 const isPrivateRoute = createRouteMatcher(
   PRIVATE_ROUTES.map((route) => `/${route}`),
 );
+const isPublicApiRoute = createRouteMatcher([
+  '/api/analytics',
+  '/api/profile-view',
+  '/api/billing/webhook',
+]);
 
 export default clerkMiddleware(async (auth: any, req: any) => {
   // Protect all private routes - require authentication
-  if (isPrivateRoute(req)) {
+  if (isPrivateRoute(req) && !isPublicApiRoute(req)) {
     await auth.protect();
   }
 });

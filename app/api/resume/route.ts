@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { ResumeDataSchema } from '@/lib/resume';
 import { enforcePlanAccess } from '@/lib/plans';
+import { deleteAllJobProfiles } from '@/lib/server/profileRepository';
 
 // API Response Types
 export type GetResumeResponse = { resume?: Resume } | { error: string };
@@ -102,7 +103,7 @@ export async function DELETE(): Promise<NextResponse<DeleteResumeResponse>> {
       await deleteR2File({ key: resume.file.key });
     }
 
-    await deleteResume(user.id);
+    await Promise.all([deleteResume(user.id), deleteAllJobProfiles(user.id)]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting resume:', error);

@@ -2,6 +2,9 @@ import { upstashRedis } from '@/lib/server/redis';
 import { ResumeDataSchema } from '@/lib/resume';
 import { z } from 'zod';
 import { PRIVATE_ROUTES } from '../routes';
+import { getBillingAccount } from '@/lib/billing/repository';
+import { resolvePlan } from '@/lib/billing/entitlements';
+import { PlanIdSchema, type PlanId } from '@/lib/billing/types';
 
 // Key prefixes for different types of data
 const REDIS_KEYS = {
@@ -23,45 +26,66 @@ const FileSchema = z.object({
 const FORBIDDEN_USERNAMES = PRIVATE_ROUTES;
 
 // Define the complete resume schema
-export const AccountPlanSchema = z.enum(['free', 'pro']);
+export const AccountPlanSchema = PlanIdSchema;
 
-const ResumeSchema = z.object({
+const StoredResumeSchema = z.object({
   status: z.enum(['live', 'draft']).default('draft'),
-  plan: AccountPlanSchema.default('free'),
   file: FileSchema.nullish(),
   fileContent: z.string().nullish(),
   resumeData: ResumeDataSchema.nullish(),
 });
 
+const LegacyResumeSchema = StoredResumeSchema.extend({
+  plan: AccountPlanSchema.optional(),
+});
+
 // Type inference for the resume data
 export type ResumeData = z.infer<typeof ResumeDataSchema>;
-export type Resume = z.infer<typeof ResumeSchema>;
-type ResumeInput = z.input<typeof ResumeSchema>;
-export type AccountPlan = z.infer<typeof AccountPlanSchema>;
+export type Resume = z.infer<typeof StoredResumeSchema> & { plan: PlanId };
+type ResumeInput = z.input<typeof StoredResumeSchema> & { plan?: PlanId };
+export type AccountPlan = PlanId;
 
 // Function to get resume data for a user
 export async function getResume(userId: string): Promise<Resume | undefined> {
   try {
-    const resume = await upstashRedis.get<Resume>(
+    const resume = await upstashRedis.get<unknown>(
       `${REDIS_KEYS.RESUME_PREFIX}${userId}`,
     );
-    return resume ? ResumeSchema.parse(resume) : undefined;
+    if (!resume) return undefined;
+
+    const legacyResume = LegacyResumeSchema.parse(resume);
+    const billingAccount = await getBillingAccount(userId, legacyResume.plan);
+    const { plan: _legacyPlan, ...storedResume } = legacyResume;
+    if (_legacyPlan) {
+      await upstashRedis.set(
+        `${REDIS_KEYS.RESUME_PREFIX}${userId}`,
+        StoredResumeSchema.parse(storedResume),
+      );
+    }
+    const plan = resolvePlan(billingAccount);
+    const resumeData =
+      plan === 'free' && storedResume.resumeData
+        ? { ...storedResume.resumeData, themeId: 'signal' as const }
+        : storedResume.resumeData;
+    return { ...storedResume, resumeData, plan };
   } catch (error) {
     console.error('Error retrieving resume:', error);
     throw new Error('Failed to retrieve resume');
   }
 }
 
-export async function recordProfileView(userId: string): Promise<void> {
-  await upstashRedis.incr(`${REDIS_KEYS.PROFILE_VIEWS_PREFIX}${userId}`);
+export async function recordProfileView(userId: string, profileId = 'primary'): Promise<void> {
+  await upstashRedis.incr(`${REDIS_KEYS.PROFILE_VIEWS_PREFIX}${userId}:${profileId}`);
 }
 
-export async function getProfileViews(userId: string): Promise<number> {
-  return (
-    (await upstashRedis.get<number>(
-      `${REDIS_KEYS.PROFILE_VIEWS_PREFIX}${userId}`,
-    )) ?? 0
+export async function getProfileViews(userId: string, profileId = 'primary'): Promise<number> {
+  const current = await upstashRedis.get<number>(
+    `${REDIS_KEYS.PROFILE_VIEWS_PREFIX}${userId}:${profileId}`,
   );
+  if (current !== null) return current;
+  return profileId === 'primary'
+    ? (await upstashRedis.get<number>(`${REDIS_KEYS.PROFILE_VIEWS_PREFIX}${userId}`)) ?? 0
+    : 0;
 }
 
 // Function to store resume data for a user
@@ -70,7 +94,8 @@ export async function storeResume(
   resumeData: ResumeInput,
 ): Promise<void> {
   try {
-    const validatedData = ResumeSchema.parse(resumeData);
+    const { plan: _clientPlan, ...serverOwnedResume } = resumeData;
+    const validatedData = StoredResumeSchema.parse(serverOwnedResume);
     await upstashRedis.set(
       `${REDIS_KEYS.RESUME_PREFIX}${userId}`,
       validatedData,

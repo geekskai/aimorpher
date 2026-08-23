@@ -7,6 +7,7 @@ import {
 } from '@/lib/server/redisActions';
 import { deleteR2File } from '@/lib/server/deleteR2File';
 import { DELETE, POST } from '@/app/api/resume/route';
+import { deleteAllJobProfiles } from '@/lib/server/profileRepository';
 
 vi.mock('@clerk/nextjs/server', () => ({
   currentUser: vi.fn(),
@@ -20,6 +21,10 @@ vi.mock('@/lib/server/redisActions', () => ({
 
 vi.mock('@/lib/server/deleteR2File', () => ({
   deleteR2File: vi.fn(),
+}));
+
+vi.mock('@/lib/server/profileRepository', () => ({
+  deleteAllJobProfiles: vi.fn(),
 }));
 
 describe('DELETE /api/resume', () => {
@@ -61,6 +66,7 @@ describe('DELETE /api/resume', () => {
       key: 'uploads/user_123/resume.pdf',
     });
     expect(deleteResume).toHaveBeenCalledWith('user_123');
+    expect(deleteAllJobProfiles).toHaveBeenCalledWith('user_123');
     expect(
       vi.mocked(deleteR2File).mock.invocationCallOrder[0],
     ).toBeLessThan(vi.mocked(deleteResume).mock.invocationCallOrder[0]);

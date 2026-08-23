@@ -8,25 +8,27 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Pricing | Aimorpher',
-  description: 'Build a professional profile for free or join the Aimorpher Pro paid pilot.',
+  description: 'Build a professional profile free or unlock five profiles and 30 AI generations with Aimorpher Pro.',
 };
 
-export default function PricingPage() {
+export default async function PricingPage({ searchParams }: { searchParams: Promise<{ checkout?: string }> }) {
+  const checkoutReturned = (await searchParams).checkout === 'success';
   return (
     <div className="min-h-screen bg-[#f7f8fb]">
       <PricingAnalytics />
       <TopMenu />
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-16 lg:px-8">
+        {checkoutReturned ? <div role="status" className="mx-auto mb-8 max-w-2xl rounded-lg border border-blue-300 bg-blue-50 p-4 text-center text-sm text-blue-950">Checkout returned successfully. Pro activates only after the signed Creem webhook confirms your trial or payment.</div> : null}
         <div className="mx-auto max-w-2xl text-center">
           <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-[#315efb]">
-            Simple paid pilot
+            Simple, growth-first pricing
           </p>
           <h1 className="mt-4 font-sans text-5xl font-black tracking-[-0.045em]">
             Publish free. Pay for career leverage.
           </h1>
           <p className="mt-5 text-lg leading-8 text-[#596170]">
-            Pro is an early paid pilot. Billing is confirmed personally before
-            access is activated—there is no automatic charge from this page.
+            Start free. Monthly Pro includes one 7-day trial with a payment
+            method and renews automatically at $12 unless canceled.
           </p>
         </div>
 
@@ -53,7 +55,7 @@ export default function PricingPage() {
 
           <article className="relative rounded-2xl border border-[#0a0d12] bg-[#0a0d12] p-7 text-white shadow-[9px_9px_0_#315efb]">
             <span className="absolute right-6 top-6 rounded-full bg-[#bdf7d0] px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0a0d12]">
-              Paid pilot
+              Most flexible
             </span>
             <p className="font-mono text-xs uppercase tracking-[0.14em] text-white/60">Pro</p>
             <p className="mt-3 font-sans text-5xl font-black">
@@ -64,13 +66,13 @@ export default function PricingPage() {
               billingPeriod="monthly"
               className="mt-7 flex h-11 items-center justify-center rounded-md bg-[#315efb] font-semibold transition-colors hover:bg-[#426bff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
-              Join the paid pilot
+              Start 7-day trial
             </PaidPilotLink>
             <PaidPilotLink
               billingPeriod="annual"
               className="mt-3 flex h-10 items-center justify-center rounded-md border border-white/25 text-sm font-semibold text-white/80 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
-              Choose annual pilot · $96/year
+              Choose annual · $96/year
             </PaidPilotLink>
             <ul className="mt-7 space-y-3 text-sm">
               {PLAN_DETAILS.pro.features.map((feature) => (
@@ -87,6 +89,10 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
+            <p className="mt-5 text-xs leading-5 text-white/60">
+              Prices include tax. Annual has no trial and its first payment is
+              eligible for a full refund requested within 14 days.
+            </p>
           </article>
         </div>
 

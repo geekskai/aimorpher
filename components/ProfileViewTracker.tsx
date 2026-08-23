@@ -2,13 +2,13 @@
 
 import { useEffect } from 'react';
 
-export function ProfileViewTracker({ username }: { username: string }) {
+export function ProfileViewTracker({ username, versionSlug }: { username: string; versionSlug?: string }) {
   useEffect(() => {
-    const sessionKey = `aimorpher:profile-view:${username}`;
+    const sessionKey = `aimorpher:profile-view:${username}:${versionSlug ?? 'primary'}`;
     if (sessionStorage.getItem(sessionKey)) return;
     sessionStorage.setItem(sessionKey, 'true');
 
-    const body = JSON.stringify({ username });
+    const body = JSON.stringify({ username, versionSlug });
 
     if (navigator.sendBeacon) {
       navigator.sendBeacon(
@@ -24,7 +24,7 @@ export function ProfileViewTracker({ username }: { username: string }) {
       body,
       keepalive: true,
     }).catch(() => undefined);
-  }, [username]);
+  }, [username, versionSlug]);
 
   return null;
 }

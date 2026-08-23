@@ -51,7 +51,7 @@ export function ProfileEnhancements({
               Profile style
             </h2>
             <p className="mt-1 text-sm text-design-gray">
-              Signal is free. Studio and Terminal are included in the paid pilot.
+              Signal is free. Studio and Terminal are included in Pro.
             </p>
           </div>
           {plan === 'free' ? (

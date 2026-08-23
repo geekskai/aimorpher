@@ -77,7 +77,7 @@ export default function Home() {
                   variant="outline"
                   className="h-12 rounded-md border-[#cfd5df] bg-white px-6 text-base"
                 >
-                  <Link href="#how-it-works">See how it works</Link>
+                  <Link href="/sample">View a real profile sample</Link>
                 </Button>
               </div>
               <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#596170]">
@@ -185,14 +185,14 @@ export default function Home() {
           <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
             <div>
               <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-[#315efb]">
-                Paid pilot
+                Aimorpher Pro
               </p>
               <h2 className="mt-3 max-w-2xl font-sans text-4xl font-black tracking-[-0.035em]">
                 Start free. Upgrade when your profile becomes part of your job search.
               </h2>
               <p className="mt-4 max-w-xl text-[#596170]">
-                Pro adds professional themes, private view analytics, custom domains,
-                and job-specific profile versions.
+                Pro adds up to five profiles, 30 successful AI generations,
+                professional themes, private view analytics, and no branding.
               </p>
             </div>
             <div className="min-w-64 rounded-xl border border-[#0a0d12] bg-white p-6 shadow-[8px_8px_0_#0a0d12]">

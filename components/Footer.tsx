@@ -1,4 +1,5 @@
 import { TOGETHER_LINK } from '@/lib/utils';
+import Link from 'next/link';
 
 export function Footer() {
   return (
@@ -13,15 +14,14 @@ export function Footer() {
           >
             Together.ai
           </a>{' '}
-          &{' '}
-          <a
-            target="_blank"
-            href={TOGETHER_LINK}
-            className="text-design-black underline underline-offset-2"
-          >
-            Qwen Next
-          </a>
+          for open-model inference
         </div>
+
+        <nav className="flex flex-wrap items-center justify-center gap-3 text-xs text-design-gray" aria-label="Legal">
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/refund-policy">Refunds</Link>
+        </nav>
 
         <div className="flex gap-2">
           <a

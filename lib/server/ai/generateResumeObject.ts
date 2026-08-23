@@ -15,13 +15,16 @@ const togetherai = createTogetherAI({
   },
 });
 
+export const RESUME_MODEL =
+  process.env.TOGETHER_RESUME_MODEL ?? 'openai/gpt-oss-120b';
+
 export const generateResumeObject = async (
   resumeText: string,
 ): Promise<ResumeDataSchemaType | undefined> => {
   const startTime = Date.now();
   try {
     const { object } = await generateObject({
-      model: togetherai('Qwen/Qwen3-Next-80B-A3B-Instruct'),
+      model: togetherai(RESUME_MODEL),
       maxRetries: 2,
        schema: ResumeDataSchema,
       prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text with this EXACT structure:

@@ -13,6 +13,13 @@ import ProcessingStatus from '@/components/ProcessingStatus';
 import { MAX_USERNAME_LENGTH } from '@/lib/config';
 import { currentUser } from '@clerk/nextjs/server';
 import { ResumeDataSchema } from '@/lib/resume';
+import { getBillingAccount } from '@/lib/billing/repository';
+import { resolveEntitlements } from '@/lib/billing/entitlements';
+import {
+  commitGeneration,
+  releaseGeneration,
+  reserveGeneration,
+} from '@/lib/billing/quota';
 
 async function LLMProcessing({ userId }: { userId: string }) {
   const user = await currentUser();
@@ -25,9 +32,15 @@ async function LLMProcessing({ userId }: { userId: string }) {
   let resumeData = resume.resumeData;
 
   if (!resumeData) {
+    const billingAccount = await getBillingAccount(userId, resume.plan);
+    const entitlements = resolveEntitlements(billingAccount);
+    const reservation = await reserveGeneration(userId, entitlements);
+    if (!reservation) redirect('/upload?error=aiQuotaReached');
+
     let resumeObject = await generateResumeObject(resume?.fileContent);
 
     if (!resumeObject) {
+      await releaseGeneration(userId, reservation.token);
       messageTip =
         "We couldn't extract data from your PDF. Please edit your resume manually.";
       resumeObject = ResumeDataSchema.parse({
@@ -43,6 +56,8 @@ async function LLMProcessing({ userId }: { userId: string }) {
         workExperience: [],
         education: [],
       });
+    } else {
+      await commitGeneration(userId, reservation.token);
     }
 
     await storeResume(userId, {
