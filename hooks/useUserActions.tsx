@@ -107,6 +107,7 @@ export function useUserActions() {
     const fileOnR2 = await uploadToR2(file);
 
     const newResume: Resume = {
+      plan: 'free',
       file: {
         name: file.name,
         url: fileOnR2.url,

@@ -41,7 +41,12 @@ describe('generateResumeObject', () => {
       'John Doe\nSoftware Engineer\nNew York, USA',
     );
 
-    expect(result).toEqual(generatedResume);
+    expect(result).toMatchObject(generatedResume);
+    expect(result).toMatchObject({
+      profileVersion: 1,
+      themeId: 'signal',
+      profileBlocks: { projects: [], links: [] },
+    });
     expect(generateObject).toHaveBeenCalledOnce();
   });
 

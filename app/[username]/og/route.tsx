@@ -13,7 +13,9 @@ export async function GET(request: NextRequest) {
     // Get data from resume
     const name = resume?.resumeData?.header?.name;
     const role = resume?.resumeData?.header?.shortAbout;
-    const location = resume?.resumeData?.header?.location;
+    const location = resume?.resumeData?.visibility.location
+      ? resume.resumeData.header.location
+      : undefined;
     const website = `www.aimorpher.com/${username}`;
 
     // Use profile image from Clerk user

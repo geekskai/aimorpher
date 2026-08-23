@@ -16,6 +16,7 @@ export default function PreviewActionbar({
   onStatusChange,
   isChangingStatus,
   isPublishBlocked = false,
+  onLinkCopied,
 }: {
   initialUsername: string;
   prefix?: string;
@@ -23,6 +24,7 @@ export default function PreviewActionbar({
   onStatusChange?: (newStatus: PublishStatuses) => Promise<void>;
   isChangingStatus?: boolean;
   isPublishBlocked?: boolean;
+  onLinkCopied?: () => void;
 }) {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
@@ -41,19 +43,27 @@ export default function PreviewActionbar({
       <div className="w-full rounded-lg bg-[#fcfcfc] border-[0.5px] border-neutral-300 flex items-center justify-between py-3 px-5  sm:px-4 sm:py-2.5  flex-col sm:flex-row gap-4">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
           <div className="flex items-center gap-1 mr-1">
-            <img
-              src="/link-icon.png"
+            <button
+              type="button"
               className={cn(
-                'w-4 h-4 text-design-black ',
-                status === 'live' && 'cursor-pointer'
+                'flex size-10 items-center justify-center rounded-md',
+                status === 'live'
+                  ? 'cursor-pointer hover:bg-neutral-100'
+                  : 'cursor-default',
               )}
               onClick={() => {
                 if (!initialUsername || status !== 'live') return;
                 const portofolioUrl = getSelfSoUrl(initialUsername);
-                navigator.clipboard.writeText(portofolioUrl);
-                toast.success('Copied link to your website');
+                navigator.clipboard.writeText(portofolioUrl).then(() => {
+                  onLinkCopied?.();
+                  toast.success('Copied link to your website');
+                });
               }}
-            />
+              disabled={status !== 'live'}
+              aria-label="Copy published profile link"
+            >
+              <img src="/link-icon.png" className="size-4" alt="" />
+            </button>
             <p className="text-sm text-design-black">{prefix}</p>
           </div>
 
@@ -143,7 +153,10 @@ export default function PreviewActionbar({
               )}
             </div>
             {status === 'live' && (
-              <Button className="flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto">
+              <Button
+                asChild
+                className="flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto"
+              >
                 <a
                   href={`${getSelfSoUrl(initialUsername)}`}
                   target="_blank"

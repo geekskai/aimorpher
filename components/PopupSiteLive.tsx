@@ -4,6 +4,7 @@ import { Copy, SquareArrowOutUpRight, X } from 'lucide-react';
 import { useMemo } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
+import { useFunnelAnalytics } from '@/hooks/useFunnelAnalytics';
 
 export const PopupSiteLive = ({
   isOpen,
@@ -15,6 +16,7 @@ export const PopupSiteLive = ({
   websiteUrl: string;
 }) => {
   const isMobile = useIsMobile();
+  const plausible = useFunnelAnalytics();
 
   const mainContent = useMemo(() => {
     return (
@@ -38,8 +40,12 @@ export const PopupSiteLive = ({
             <div className="grid grid-cols-2 gap-4 md:gap-2 ">
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(websiteUrl);
-                  toast.success('Copied link to your website');
+                  navigator.clipboard.writeText(websiteUrl).then(() => {
+                    plausible('profile_shared', {
+                      props: { method: 'copy_link' },
+                    });
+                    toast.success('Copied link to your website');
+                  });
                 }}
                 className="bg-design-black rounded-md hover:bg-gray-800 p-2 text-white flex flex-row gap-2 items-center justify-center"
                 title="Copy URL"
@@ -61,7 +67,7 @@ export const PopupSiteLive = ({
         </div>
       </div>
     );
-  }, [websiteUrl]);
+  }, [plausible, websiteUrl]);
 
   if (!isMobile) {
     return (

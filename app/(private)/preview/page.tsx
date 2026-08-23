@@ -12,6 +12,7 @@ import { Suspense } from 'react';
 import ProcessingStatus from '@/components/ProcessingStatus';
 import { MAX_USERNAME_LENGTH } from '@/lib/config';
 import { currentUser } from '@clerk/nextjs/server';
+import { ResumeDataSchema } from '@/lib/resume';
 
 async function LLMProcessing({ userId }: { userId: string }) {
   const user = await currentUser();
@@ -29,7 +30,7 @@ async function LLMProcessing({ userId }: { userId: string }) {
     if (!resumeObject) {
       messageTip =
         "We couldn't extract data from your PDF. Please edit your resume manually.";
-      resumeObject = {
+      resumeObject = ResumeDataSchema.parse({
         header: {
           name:
             user?.fullName || user?.emailAddresses[0]?.emailAddress || 'user',
@@ -41,7 +42,7 @@ async function LLMProcessing({ userId }: { userId: string }) {
         summary: 'You should add a summary here',
         workExperience: [],
         education: [],
-      };
+      });
     }
 
     await storeResume(userId, {
@@ -50,6 +51,8 @@ async function LLMProcessing({ userId }: { userId: string }) {
     });
     resumeData = resumeObject;
   }
+
+  if (!resumeData) redirect('/upload?error=resumeGenerationFailed');
 
   // we set the username only if it wasn't already set for this user meaning it's new user
   const foundUsername = await getUsernameById(userId);

@@ -1,10 +1,10 @@
 <a href="https://www.aimorpher.com">
-  <img alt="aimorpher.com" src="./public/og.png">
+  <img alt="aimorpher.com" src="https://aimorpher.com/opengraph-image">
   <h1 align="center">aimorpher.com</h1>
 </a>
 
 <p align="center">
-  几秒钟内将您的简历转换为专业网站。由 Together.ai 和 Llama 3.3 提供支持。
+  将简历、GitHub 和精选项目转换为面向技术求职的专业网站。
 </p>
 
 <p align="center">
@@ -16,17 +16,20 @@
 ## 🚀 功能特性
 
 - **一键转换**：上传 LinkedIn PDF 或简历，瞬间生成专业网站
-- **AI 驱动**：使用 Together.ai 的 Llama 3.3 进行智能内容提取
+- **AI 驱动**：使用 Together.ai 的 Qwen3 Next 进行结构化内容提取
 - **实时编辑**：支持实时预览的简历内容编辑
+- **项目与链接**：展示精选项目、GitHub、作品和技术文章
+- **隐私控制**：决定哪些联系方式和简历字段公开显示
+- **职业化主题**：提供 Signal、Studio 和 Terminal 三种主页样式
 - **个性化 URL**：获得专属 URL（如：aimorpher.com/你的名字）
 - **响应式设计**：在所有设备上都有出色的显示效果
 - **SEO 优化**：内置 SEO 优化和 Open Graph 支持
-- **100%免费开源**：无隐藏费用，完全开源
+- **免费核心能力与开源代码**：免费发布完整主页，Pro 为可选付费试点
 
 ## 🛠 技术栈
 
-- **AI/大语言模型**：Together.ai + Llama 3.3 用于内容提取
-- **前端框架**：Next.js 14 with App Router
+- **AI/大语言模型**：Together.ai + Qwen3 Next 用于内容提取
+- **前端框架**：Next.js 15 with App Router
 - **身份验证**：Clerk 用户管理系统 geekskai666
 - **数据库**：Upstash Redis 数据存储
 - **文件存储**：Cloudflare R2 PDF 存储
@@ -39,8 +42,8 @@
 
 1. **用户注册**：使用 Clerk 身份验证系统创建账户
 2. **文件上传**：上传 LinkedIn PDF 或简历文件（仅支持 PDF 格式）
-3. **AI 智能处理**：Llama 3.3 大语言模型提取并结构化您的个人信息
-4. **内容自定义**：使用实时预览功能编辑和自定义网站内容
+3. **AI 智能处理**：Qwen3 Next 提取并结构化您的个人信息
+4. **内容自定义**：审核隐私、项目、链接和主页样式
 5. **一键发布**：获得个性化网站 URL 并与世界分享您的专业形象
 
 ## 🚀 快速开始

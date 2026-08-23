@@ -13,4 +13,5 @@ export function getSelfSoUrl(username: string) {
   return `${domain}/${username}`;
 }
 
-export const TOGETHER_LINK = 'https://togetherai.link/?utm_source=selfso&utm_medium=referral&utm_campaign=example-app';
+export const TOGETHER_LINK =
+  'https://togetherai.link/?utm_source=aimorpher&utm_medium=referral&utm_campaign=profile-builder';

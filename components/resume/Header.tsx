@@ -17,6 +17,14 @@ interface SocialButtonProps {
   label: string;
 }
 
+const getHostname = (url: string) => {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
+};
+
 function SocialButton({ href, icon: Icon, label }: SocialButtonProps) {
   return (
     <Button className="size-8" variant="outline" size="icon" asChild>
@@ -24,7 +32,7 @@ function SocialButton({ href, icon: Icon, label }: SocialButtonProps) {
         href={
           href.startsWith('mailto:') || href.startsWith('tel:')
             ? href
-            : `${href}${href.includes('?') ? '&' : '?'}ref=selfso`
+            : `${href}${href.includes('?') ? '&' : '?'}ref=aimorpher`
         }
         aria-label={label}
         target="_blank"
@@ -42,9 +50,11 @@ function SocialButton({ href, icon: Icon, label }: SocialButtonProps) {
 export function Header({
   header,
   picture,
+  visibility,
 }: {
   header: ResumeDataSchemaType['header'];
   picture?: string;
+  visibility: ResumeDataSchemaType['visibility'];
 }) {
   const prefixUrl = (stringToFix?: string | null) => {
     if (!stringToFix) return undefined;
@@ -105,19 +115,21 @@ export function Header({
           {header.shortAbout}
         </p>
 
-        <p className="max-w-md items-center text-pretty font-mono text-xs text-foreground">
-          <a
-            className="inline-flex gap-x-1.5 align-baseline leading-none hover:underline text-[#9CA0A8]"
-            href={`https://www.google.com/maps/search/${encodeURIComponent(
-              header.location || ''
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Location: ${header.location}`}
-          >
-            {header.location}
-          </a>
-        </p>
+        {visibility.location && header.location ? (
+          <p className="max-w-md items-center text-pretty font-mono text-xs text-foreground">
+            <a
+              className="inline-flex gap-x-1.5 align-baseline leading-none hover:underline text-[#9CA0A8]"
+              href={`https://www.google.com/maps/search/${encodeURIComponent(
+                header.location || '',
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Location: ${header.location}`}
+            >
+              {header.location}
+            </a>
+          </p>
+        ) : null}
 
         <div
           className="flex gap-x-1 pt-1 font-mono text-sm text-design-resume print:hidden"
@@ -131,14 +143,14 @@ export function Header({
               label="Personal website"
             />
           )}
-          {header.contacts.email && (
+          {visibility.email && header.contacts.email && (
             <SocialButton
               href={`mailto:${header.contacts.email}`}
               icon={MailIcon}
               label="Email"
             />
           )}
-          {header.contacts.phone && (
+          {visibility.phone && header.contacts.phone && (
             <SocialButton
               href={`tel:${header.contacts.phone}`}
               icon={PhoneIcon}
@@ -178,12 +190,12 @@ export function Header({
                 className="underline hover:text-foreground/70"
                 href={socialLinks.website}
               >
-                {new URL(socialLinks.website).hostname}
+                {getHostname(socialLinks.website)}
               </a>
               <span aria-hidden="true">/</span>
             </>
           )}
-          {header.contacts.email && (
+          {visibility.email && header.contacts.email && (
             <>
               <a
                 className="underline hover:text-foreground/70"
@@ -194,7 +206,7 @@ export function Header({
               <span aria-hidden="true">/</span>
             </>
           )}
-          {header.contacts.phone && (
+          {visibility.phone && header.contacts.phone && (
             <a
               className="underline hover:text-foreground/70"
               href={`tel:${header.contacts.phone}`}

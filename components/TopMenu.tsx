@@ -5,7 +5,7 @@ import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 export function TopMenu() {
   return (
     <>
-      <header className="w-full py-4 md:px-0 px-6 flex justify-between items-center max-w-4xl mx-auto h-[68px]">
+      <header className="w-full py-4 px-6 flex justify-between items-center max-w-6xl mx-auto h-[68px]">
         <Link href="/" className="flex items-center gap-2">
           <img
             src="/logo.svg"
@@ -14,7 +14,13 @@ export function TopMenu() {
           />
         </Link>
 
-        <div>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/pricing"
+            className="hidden text-sm font-medium text-design-gray hover:text-design-black sm:inline"
+          >
+            Pricing
+          </Link>
           <SignedIn>
             {/* User is signed in */}
             <UserButton />

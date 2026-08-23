@@ -1,10 +1,10 @@
 <a href="https://www.aimorpher.com">
-  <img alt="aimorpher.com" src="./public/og.png">
+  <img alt="aimorpher.com" src="https://aimorpher.com/opengraph-image">
   <h1 align="center">aimorpher.com</h1>
 </a>
 
 <p align="center">
-  Turn your resume into a professional website in seconds. Powered by Together.ai & Llama 3.3.
+  Turn your resume, GitHub, and best projects into a professional website built for technical hiring.
 </p>
 
 <p align="center">
@@ -18,17 +18,20 @@
 ### 🚀 Features
 
 - **One-Click Conversion**: Upload your LinkedIn PDF or resume and get a professional website instantly
-- **AI-Powered**: Uses Together.ai's Llama 3.3 for intelligent content extraction
+- **AI-Powered**: Uses Together.ai's Qwen3 Next model for structured content extraction
 - **Real-time Editing**: Edit your resume content with live preview
+- **Professional Proof**: Add selected projects, GitHub, writing, demos, and portfolio links
+- **Privacy Controls**: Choose which contact and resume fields are public
+- **Professional Themes**: Signal, Studio, and Terminal profile styles
 - **Custom URLs**: Get your personalized URL (e.g., aimorpher.com/yourname)
 - **Responsive Design**: Looks great on all devices
 - **SEO Optimized**: Built-in SEO with Open Graph support
-- **100% Free & Open Source**: No hidden costs, fully open source
+- **Free Core & Open Source**: Publish a complete profile for free; Pro is an optional paid pilot
 
 ### 🛠 Tech Stack
 
-- **AI/LLM**: Together.ai with Llama 3.3 for content extraction
-- **Framework**: Next.js 14 with App Router
+- **AI/LLM**: Together.ai with Qwen3 Next for content extraction
+- **Framework**: Next.js 15 with App Router
 - **Authentication**: Clerk for user management geekskai666
 - **Database**: Upstash Redis for data storage
 - **File Storage**: Cloudflare R2 for PDF storage
@@ -40,8 +43,8 @@
 
 1. **Sign Up**: Create an account with Clerk authentication
 2. **Upload**: Upload your LinkedIn PDF or resume (supports PDF format only)
-3. **AI Processing**: Llama 3.3 extracts and structures your information
-4. **Customize**: Edit and customize your content with real-time preview
+3. **AI Processing**: Qwen3 Next extracts and structures your information
+4. **Customize**: Review privacy, projects, links, and profile presentation
 5. **Publish**: Get your personalized website URL and share it with the world
 
 ### 🚀 Quick Start
@@ -129,7 +132,7 @@
 ## Cloning & running
 
 1. Fork or clone the repo
-2. Create an account at [Together AI](https://togetherai.link/?utm_source=selfso&utm_medium=referral&utm_campaign=example-app) for the LLM
+2. Create an account at [Together AI](https://togetherai.link/?utm_source=aimorpher&utm_medium=referral&utm_campaign=profile-builder) for the LLM
 3. Create an account at [Upstash](https://upstash.com/) for the Redis DB
 4. Create an account at [Cloudflare](https://cloudflare.com/) for the R2 bucket
 5. Create a `.env` (use the `.example.env` for reference) and replace the API keys
@@ -153,7 +156,7 @@ pnpm test
 
 - [ ] add error logging to make sure to fix any bugs
 - [ ] add ability to get to the "preview" page if you have a site already
-- [ ] ability to edit links in the site
-- [ ] ability to edit any section in the site
-- [ ] add themes that you can toggle on (start with ghibli)
+- [x] ability to edit professional links and selected projects
+- [x] ability to edit any resume section
+- [x] add professional themes with plan-aware access
 - [ ] Delete previously uploaded resume when we upload a new one

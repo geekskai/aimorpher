@@ -9,12 +9,16 @@ import { WorkExperienceField } from './WorkExperienceField';
 import { EducationField } from './EducationField';
 import { SkillField } from './SkillField';
 import { AddSkillDialog } from './AddSkillDialog';
+import { ProfileEnhancements } from './ProfileEnhancements';
+import type { AccountPlan } from '@/lib/server/redisActions';
 
 export const EditResume = ({
   resume,
+  plan,
   onChangeResume,
 }: {
   resume: ResumeData;
+  plan: AccountPlan;
   onChangeResume: (newResume: ResumeData) => void;
 }) => {
   const [isAddSkillDialogOpen, setIsAddSkillDialogOpen] = useState(false);
@@ -398,6 +402,12 @@ export const EditResume = ({
           />
         </div>
       </div>
+
+      <ProfileEnhancements
+        resume={resume}
+        plan={plan}
+        onChangeResume={onChangeResume}
+      />
     </section>
   );
 };

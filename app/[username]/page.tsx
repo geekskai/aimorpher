@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { FullResume } from '@/components/resume/FullResume';
 import { Metadata } from 'next';
 import { getUserData } from './utils';
+import { ProfileViewTracker } from '@/components/ProfileViewTracker';
 
 export async function generateMetadata({
   params,
@@ -67,6 +68,7 @@ export default async function ProfilePage({
     jobTitle: resume.resumeData.header.shortAbout,
     description: resume.resumeData.summary,
     email:
+      resume.resumeData.visibility.email &&
       resume.resumeData.header.contacts.email &&
       `mailto:${resume.resumeData.header.contacts.email}`,
     url: `https://aimorpher.com/${username}`,
@@ -75,6 +77,7 @@ export default async function ProfilePage({
 
   return (
     <>
+      <ProfileViewTracker username={username} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -82,17 +85,19 @@ export default async function ProfilePage({
 
       <FullResume resume={resume?.resumeData} profilePicture={profilePicture} />
 
-      <div className="text-center mt-8 mb-4">
-        <Link
-          href={`/?ref=${username}`}
-          className="text-design-gray font-mono text-sm"
-        >
-          Made by{' '}
-          <span className="text-design-black underline underline-offset-2">
-            aimorpher.com
-          </span>
-        </Link>
-      </div>
+      {resume.plan === 'free' ? (
+        <div className="text-center mt-8 mb-4">
+          <Link
+            href={`/?ref=${username}`}
+            className="text-design-gray font-mono text-sm"
+          >
+            Made by{' '}
+            <span className="text-design-black underline underline-offset-2">
+              aimorpher.com
+            </span>
+          </Link>
+        </div>
+      ) : null}
     </>
   );
 }

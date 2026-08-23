@@ -8,6 +8,7 @@ const REDIS_KEYS = {
   RESUME_PREFIX: 'resume:', // Using colon is a Redis convention for namespacing
   USER_ID_PREFIX: 'user:id:',
   USER_NAME_PREFIX: 'user:name:',
+  PROFILE_VIEWS_PREFIX: 'analytics:profile-views:',
 } as const;
 
 // Define the file schema
@@ -22,8 +23,11 @@ const FileSchema = z.object({
 const FORBIDDEN_USERNAMES = PRIVATE_ROUTES;
 
 // Define the complete resume schema
+export const AccountPlanSchema = z.enum(['free', 'pro']);
+
 const ResumeSchema = z.object({
   status: z.enum(['live', 'draft']).default('draft'),
+  plan: AccountPlanSchema.default('free'),
   file: FileSchema.nullish(),
   fileContent: z.string().nullish(),
   resumeData: ResumeDataSchema.nullish(),
@@ -32,6 +36,8 @@ const ResumeSchema = z.object({
 // Type inference for the resume data
 export type ResumeData = z.infer<typeof ResumeDataSchema>;
 export type Resume = z.infer<typeof ResumeSchema>;
+type ResumeInput = z.input<typeof ResumeSchema>;
+export type AccountPlan = z.infer<typeof AccountPlanSchema>;
 
 // Function to get resume data for a user
 export async function getResume(userId: string): Promise<Resume | undefined> {
@@ -39,17 +45,29 @@ export async function getResume(userId: string): Promise<Resume | undefined> {
     const resume = await upstashRedis.get<Resume>(
       `${REDIS_KEYS.RESUME_PREFIX}${userId}`,
     );
-    return resume || undefined;
+    return resume ? ResumeSchema.parse(resume) : undefined;
   } catch (error) {
     console.error('Error retrieving resume:', error);
     throw new Error('Failed to retrieve resume');
   }
 }
 
+export async function recordProfileView(userId: string): Promise<void> {
+  await upstashRedis.incr(`${REDIS_KEYS.PROFILE_VIEWS_PREFIX}${userId}`);
+}
+
+export async function getProfileViews(userId: string): Promise<number> {
+  return (
+    (await upstashRedis.get<number>(
+      `${REDIS_KEYS.PROFILE_VIEWS_PREFIX}${userId}`,
+    )) ?? 0
+  );
+}
+
 // Function to store resume data for a user
 export async function storeResume(
   userId: string,
-  resumeData: Resume,
+  resumeData: ResumeInput,
 ): Promise<void> {
   try {
     const validatedData = ResumeSchema.parse(resumeData);

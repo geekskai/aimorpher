@@ -43,6 +43,7 @@ describe('DELETE /api/resume', () => {
   it('deletes the R2 object before the Redis resume', async () => {
     vi.mocked(currentUser).mockResolvedValue({ id: 'user_123' } as never);
     vi.mocked(getResume).mockResolvedValue({
+      plan: 'free',
       status: 'live',
       file: {
         name: 'resume.pdf',
@@ -68,6 +69,7 @@ describe('DELETE /api/resume', () => {
   it('keeps the Redis record when R2 deletion fails', async () => {
     vi.mocked(currentUser).mockResolvedValue({ id: 'user_123' } as never);
     vi.mocked(getResume).mockResolvedValue({
+      plan: 'free',
       status: 'draft',
       file: {
         name: 'resume.pdf',
@@ -88,6 +90,7 @@ describe('DELETE /api/resume', () => {
   it('does not delete an R2 key outside the current user path', async () => {
     vi.mocked(currentUser).mockResolvedValue({ id: 'user_123' } as never);
     vi.mocked(getResume).mockResolvedValue({
+      plan: 'free',
       status: 'draft',
       file: {
         name: 'resume.pdf',
@@ -114,6 +117,7 @@ describe('POST /api/resume', () => {
   it('preserves server-owned file data during client updates', async () => {
     vi.mocked(currentUser).mockResolvedValue({ id: 'user_123' } as never);
     vi.mocked(getResume).mockResolvedValue({
+      plan: 'free',
       status: 'draft',
       fileContent: 'Trusted extracted text',
       file: {
@@ -146,6 +150,7 @@ describe('POST /api/resume', () => {
     expect(response.status).toBe(200);
     expect(storeResume).toHaveBeenCalledWith('user_123', {
       status: 'live',
+      plan: 'free',
       fileContent: 'Trusted extracted text',
       file: {
         name: 'resume.pdf',

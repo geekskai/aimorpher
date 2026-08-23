@@ -24,6 +24,8 @@ import {
 } from '@/components/ui/alert-dialog';
 
 import { toast } from 'sonner';
+import { ProfileAnalyticsCard } from '@/components/ProfileAnalyticsCard';
+import { useFunnelAnalytics } from '@/hooks/useFunnelAnalytics';
 
 export default function PreviewClient({ messageTip }: { messageTip?: string }) {
   const { user } = useUser();
@@ -38,6 +40,7 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showDiscardConfirmation, setShowDiscardConfirmation] = useState(false);
+  const plausible = useFunnelAnalytics();
 
   useEffect(() => {
     if (resumeQuery.data?.resume?.resumeData) {
@@ -45,7 +48,13 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
     }
   }, [resumeQuery.data?.resume?.resumeData]);
 
-  
+  useEffect(() => {
+    if (sessionStorage.getItem('aimorpher:processing-started') !== 'true') {
+      return;
+    }
+    sessionStorage.removeItem('aimorpher:processing-started');
+    plausible('ai_generation_succeeded');
+  }, [plausible]);
 
   const handleSaveChanges = async () => {
     if (!localResumeData) {
@@ -55,6 +64,7 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
 
     try {
       await saveResumeDataMutation.mutateAsync(localResumeData);
+      plausible('profile_edit_saved', { props: { section: 'profile' } });
       toast.success('Changes saved successfully');
       setHasUnsavedChanges(false);
       setIsEditMode(false);
@@ -192,12 +202,24 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
                 toast.custom((t) => <CustomLiveToast />);
               }
             }
+            if (newStatus === 'live') {
+              plausible('profile_published', {
+                props: { first_publish: isFirstTime },
+              });
+            }
           }}
           isChangingStatus={toggleStatusMutation.isPending}
           isPublishBlocked={
             hasUnsavedChanges || saveResumeDataMutation.isPending
           }
+          onLinkCopied={() =>
+            plausible('profile_shared', { props: { method: 'copy_link' } })
+          }
         />
+      </div>
+
+      <div className="max-w-3xl mx-auto w-full md:px-0 px-4">
+        <ProfileAnalyticsCard plan={resumeQuery.data?.resume?.plan ?? 'free'} />
       </div>
 
       <div className="max-w-3xl mx-auto w-full flex flex-col md:flex-row justify-between items-center px-4 md:px-0 gap-4">
@@ -250,6 +272,7 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
         {isEditMode ? (
           <EditResume
             resume={localResumeData}
+            plan={resumeQuery.data?.resume?.plan ?? 'free'}
             onChangeResume={handleResumeChange}
           />
         ) : (

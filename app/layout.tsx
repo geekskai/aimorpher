@@ -1,5 +1,4 @@
 import type React from 'react';
-import { JetBrains_Mono } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
@@ -7,15 +6,13 @@ import { ReactQueryClientProvider } from '@/components/ReactQueryClientProvider'
 import { Metadata } from 'next';
 import PlausibleProvider from 'next-plausible';
 
-const mono = JetBrains_Mono({ subsets: ['latin'] });
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://aimorpher.com'),
-  title: 'aimorpher.com - Resume to Website',
+  title: 'Aimorpher - Resume to Professional Website',
   description:
-    'LinkedIn to Website in one click! Powered by Together AI and Llama 3.3',
+    'Turn your resume, GitHub, and best projects into a professional website built for technical hiring.',
   openGraph: {
-    images: '/og.png',
+    images: '/opengraph-image',
   },
 };
 
@@ -38,7 +35,7 @@ export default function RootLayout({
             )} */}
               {/* rest of your scripts go under */}
             </head>
-            <body className={`${mono.className} min-h-screen flex flex-col`}>
+            <body className="min-h-screen flex flex-col font-mono">
               <main className="flex-1 flex flex-col">{children}</main>
               <Toaster richColors position="bottom-center" />
             </body>

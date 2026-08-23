@@ -9,6 +9,8 @@ import { currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 import { z } from 'zod';
+import { ResumeDataSchema } from '@/lib/resume';
+import { enforcePlanAccess } from '@/lib/plans';
 
 // API Response Types
 export type GetResumeResponse = { resume?: Resume } | { error: string };
@@ -55,10 +57,21 @@ export async function POST(
       );
     }
 
+    const resumeData = body.resumeData
+      ? enforcePlanAccess(
+          ResumeDataSchema.parse(body.resumeData),
+          currentResume.plan,
+        )
+      : body.resumeData;
+
     await storeResume(user.id, {
+      ...currentResume,
       ...body,
+      plan: currentResume.plan,
       file: currentResume.file,
       fileContent: currentResume.fileContent,
+      resumeData:
+        body.resumeData !== undefined ? resumeData : currentResume.resumeData,
     });
 
     return NextResponse.json({ success: true });

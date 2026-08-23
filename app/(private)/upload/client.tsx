@@ -32,13 +32,15 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { MAX_PDF_SIZE_BYTES } from '@/lib/config';
+import { useFunnelAnalytics } from '@/hooks/useFunnelAnalytics';
 
 type FileState =
   | { status: 'empty' }
   | { status: 'saved'; file: { name: string; url: string; size: number } };
 
-export default function UploadPageClient() {
+export default function UploadPageClient({ proIntent = false }: { proIntent?: boolean }) {
   const router = useRouter();
+  const plausible = useFunnelAnalytics();
 
   const { resumeQuery, uploadResumeMutation, deleteResumeMutation } =
     useUserActions();
@@ -62,8 +64,13 @@ export default function UploadPageClient() {
   }, [resume]);
 
   const handleUploadFile = async (file: File) => {
+    const source = file.name.toLowerCase().includes('linkedin')
+      ? 'linkedin_pdf'
+      : 'resume';
+    plausible('upload_started', { props: { source } });
     try {
       await uploadResumeMutation.mutateAsync(file);
+      plausible('upload_succeeded', { props: { source } });
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'Failed to upload PDF',
@@ -95,6 +102,15 @@ export default function UploadPageClient() {
 
   return (
     <div className="flex flex-col items-center flex-1 px-4 py-12 gap-6">
+      {proIntent ? (
+        <div className="w-full max-w-[438px] rounded-lg border border-[#aeb9ff] bg-[#eef1ff] p-4 text-left">
+          <p className="font-semibold text-[#17204a]">You’re joining the Pro paid pilot.</p>
+          <p className="mt-1 text-sm leading-6 text-[#4d5666]">
+            Build your profile first. Billing and Pro activation are confirmed
+            personally before any charge is made.
+          </p>
+        </div>
+      ) : null}
       <div className="w-full max-w-[438px] text-center font-mono">
         <h1 className="text-base text-center pb-6">
           Upload a PDF of your LinkedIn or your resume and generate your
@@ -182,7 +198,11 @@ export default function UploadPageClient() {
           <Button
             className="px-4 py-3 h-auto bg-design-black hover:bg-design-black/95"
             disabled={fileState.status === 'empty' || isUpdating}
-            onClick={() => router.push('/pdf')}
+            onClick={() => {
+              plausible('processing_started');
+              sessionStorage.setItem('aimorpher:processing-started', 'true');
+              router.push('/pdf');
+            }}
           >
             {isUpdating ? (
               <>
