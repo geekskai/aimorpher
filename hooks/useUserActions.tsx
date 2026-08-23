@@ -45,6 +45,14 @@ const checkUsernameAvailability = async (
   return await response.json();
 };
 
+const deleteResume = async () => {
+  const response = await fetch('/api/resume', { method: 'DELETE' });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete resume');
+  }
+};
+
 export function useUserActions() {
   const queryClient = useQueryClient();
   const { uploadToR2 } = useR2Upload();
@@ -110,12 +118,7 @@ export function useUserActions() {
       status: 'draft',
     };
 
-    queryClient.setQueryData(['resume'], (oldData: any) => ({
-      ...oldData,
-      ...newResume,
-    }));
-
-    await internalResumeUpdate(newResume);
+    queryClient.setQueryData(['resume'], { resume: newResume });
   };
 
   // Mutation for updating resume
@@ -124,6 +127,13 @@ export function useUserActions() {
     onSuccess: () => {
       // Invalidate and refetch resume data
       queryClient.invalidateQueries({ queryKey: ['resume'] });
+    },
+  });
+
+  const deleteResumeMutation = useMutation({
+    mutationFn: deleteResume,
+    onSuccess: () => {
+      queryClient.setQueryData(['resume'], { resume: undefined });
     },
   });
 
@@ -201,6 +211,7 @@ export function useUserActions() {
   return {
     resumeQuery,
     uploadResumeMutation,
+    deleteResumeMutation,
     toggleStatusMutation,
     usernameQuery,
     updateUsernameMutation,

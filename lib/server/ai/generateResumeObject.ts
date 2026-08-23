@@ -1,6 +1,9 @@
 import { generateObject } from 'ai';
 import { createTogetherAI } from '@ai-sdk/togetherai';
-import { ResumeDataSchema } from '@/lib/resume';
+import {
+  ResumeDataSchema,
+  ResumeDataSchemaType,
+} from '@/lib/resume';
 import dedent from 'dedent';
 
 const togetherai = createTogetherAI({
@@ -12,7 +15,9 @@ const togetherai = createTogetherAI({
   },
 });
 
-export const generateResumeObject = async (resumeText: string) => {
+export const generateResumeObject = async (
+  resumeText: string,
+): Promise<ResumeDataSchemaType | undefined> => {
   const startTime = Date.now();
   try {
     const { object } = await generateObject({
@@ -95,7 +100,7 @@ export const generateResumeObject = async (resumeText: string) => {
       `Generating resume object took ${(endTime - startTime) / 1000} seconds`
     );
 
-    return object;
+    return ResumeDataSchema.parse(object);
   } catch (error) {
     console.warn('Impossible generating resume object', error);
     return undefined;

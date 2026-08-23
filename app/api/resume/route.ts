@@ -1,4 +1,10 @@
-import { getResume, Resume, storeResume } from '@/lib/server/redisActions';
+import {
+  deleteResume,
+  getResume,
+  Resume,
+  storeResume,
+} from '@/lib/server/redisActions';
+import { deleteR2File } from '@/lib/server/deleteR2File';
 import { currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
@@ -9,6 +15,7 @@ export type GetResumeResponse = { resume?: Resume } | { error: string };
 export type PostResumeResponse =
   | { success: true }
   | { error: string; details?: z.ZodError['issues'] };
+export type DeleteResumeResponse = { success: true } | { error: string };
 
 // GET endpoint to retrieve resume
 export async function GET(): Promise<NextResponse<GetResumeResponse>> {
@@ -40,7 +47,19 @@ export async function POST(
     }
 
     const body = await request.json();
-    await storeResume(user.id, body);
+    const currentResume = await getResume(user.id);
+    if (!currentResume) {
+      return NextResponse.json(
+        { error: 'Upload a resume before updating it' },
+        { status: 404 },
+      );
+    }
+
+    await storeResume(user.id, {
+      ...body,
+      file: currentResume.file,
+      fileContent: currentResume.fileContent,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -53,6 +72,29 @@ export async function POST(
     console.error('Error storing resume:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(): Promise<NextResponse<DeleteResumeResponse>> {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const resume = await getResume(user.id);
+    if (resume?.file?.key?.startsWith(`uploads/${user.id}/`)) {
+      await deleteR2File({ key: resume.file.key });
+    }
+
+    await deleteResume(user.id);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting resume:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete resume' },
       { status: 500 },
     );
   }

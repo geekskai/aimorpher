@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { cn, getSelfSoUrl } from '@/lib/utils';
-import { ExternalLink, Pencil } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import UsernameEditorView from './UsernameEditorView';
@@ -15,12 +15,14 @@ export default function PreviewActionbar({
   status,
   onStatusChange,
   isChangingStatus,
+  isPublishBlocked = false,
 }: {
   initialUsername: string;
   prefix?: string;
   status?: PublishStatuses;
   onStatusChange?: (newStatus: PublishStatuses) => Promise<void>;
   isChangingStatus?: boolean;
+  isPublishBlocked?: boolean;
 }) {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
@@ -31,6 +33,8 @@ export default function PreviewActionbar({
       await onStatusChange(newStatus);
     }
   };
+
+  const publishBlocked = status === 'draft' && isPublishBlocked;
 
   return (
     <>
@@ -106,27 +110,38 @@ export default function PreviewActionbar({
               )}
             </div>
 
-            <Button
-              key={status}
-              variant={'default'}
-              disabled={isChangingStatus}
-              onClick={handleStatusChange}
-              className={`flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto ${
-                status === 'draft'
-                  ? 'bg-design-black hover:bg-[#333333] text-[#fcfcfc]'
-                  : 'bg-design-white text-design-black hover:bg-gray-100'
-              }`}
-            >
-              {isChangingStatus ? (
-                <>
-                  <span className="mr-2 h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
-                </>
-              ) : (
-                <span className="text-sm">
-                  {status === 'draft' ? 'Publish' : 'Unpublish'}
-                </span>
+            <div className="flex flex-col items-end gap-1">
+              <Button
+                key={status}
+                variant={'default'}
+                disabled={isChangingStatus || publishBlocked}
+                onClick={handleStatusChange}
+                aria-describedby={
+                  publishBlocked ? 'publish-blocked-message' : undefined
+                }
+                className={`flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto ${
+                  status === 'draft'
+                    ? 'bg-design-black hover:bg-[#333333] text-[#fcfcfc]'
+                    : 'bg-design-white text-design-black hover:bg-gray-100'
+                }`}
+              >
+                {isChangingStatus ? (
+                  <span className="mr-2 h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent motion-reduce:animate-none" />
+                ) : (
+                  <span className="text-sm">
+                    {status === 'draft' ? 'Publish' : 'Unpublish'}
+                  </span>
+                )}
+              </Button>
+              {publishBlocked && (
+                <p
+                  id="publish-blocked-message"
+                  className="text-xs text-amber-800"
+                >
+                  Save changes before publishing
+                </p>
               )}
-            </Button>
+            </div>
             {status === 'live' && (
               <Button className="flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto">
                 <a

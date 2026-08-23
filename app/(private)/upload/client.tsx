@@ -21,6 +21,17 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { MAX_PDF_SIZE_BYTES } from '@/lib/config';
 
 type FileState =
   | { status: 'empty' }
@@ -29,8 +40,10 @@ type FileState =
 export default function UploadPageClient() {
   const router = useRouter();
 
-  const { resumeQuery, uploadResumeMutation } = useUserActions();
+  const { resumeQuery, uploadResumeMutation, deleteResumeMutation } =
+    useUserActions();
   const [fileState, setFileState] = useState<FileState>({ status: 'empty' });
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const resume = resumeQuery.data?.resume;
 
@@ -49,18 +62,36 @@ export default function UploadPageClient() {
   }, [resume]);
 
   const handleUploadFile = async (file: File) => {
-    uploadResumeMutation.mutate(file);
+    try {
+      await uploadResumeMutation.mutateAsync(file);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to upload PDF',
+      );
+    }
   };
 
-  const handleReset = () => {
-    setFileState({ status: 'empty' });
+  const handleDeleteResume = async () => {
+    try {
+      await deleteResumeMutation.mutateAsync();
+      setFileState({ status: 'empty' });
+      setShowDeleteConfirmation(false);
+      toast.success('Resume and uploaded PDF deleted');
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to delete resume',
+      );
+    }
   };
 
   if (resumeQuery.isLoading) {
     return <LoadingFallback message="Loading..." />;
   }
 
-  const isUpdating = resumeQuery.isPending || uploadResumeMutation.isPending;
+  const isUpdating =
+    resumeQuery.isPending ||
+    uploadResumeMutation.isPending ||
+    deleteResumeMutation.isPending;
 
   return (
     <div className="flex flex-col items-center flex-1 px-4 py-12 gap-6">
@@ -73,17 +104,21 @@ export default function UploadPageClient() {
         <div className="relative mx-2.5">
           {fileState.status !== 'empty' && (
             <button
-              onClick={handleReset}
+              onClick={() => setShowDeleteConfirmation(true)}
               className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full z-10"
               disabled={isUpdating}
+              aria-label="Delete uploaded resume"
             >
               <X className="h-4 w-4 text-gray-500" />
             </button>
           )}
 
           <Dropzone
+            key={fileState.status === 'empty' ? 'empty' : fileState.file.url}
             accept={{ 'application/pdf': ['.pdf'] }}
             maxFiles={1}
+            maxSize={MAX_PDF_SIZE_BYTES}
+            disabled={fileState.status !== 'empty'}
             icon={
               fileState.status !== 'empty' ? (
                 <img src="/uploaded-pdf.svg" className="h-6 w-6" />
@@ -109,7 +144,9 @@ export default function UploadPageClient() {
             onDrop={(acceptedFiles) => {
               if (acceptedFiles[0]) handleUploadFile(acceptedFiles[0]);
             }}
-            onDropRejected={() => toast.error('Only PDF files are supported')}
+            onDropRejected={() =>
+              toast.error('Upload a PDF that is 10 MB or smaller')
+            }
           />
         </div>
 
@@ -134,6 +171,11 @@ export default function UploadPageClient() {
             <img src="/linkedin-save-to-pdf.png" className="h-auto w-full" />
           </DialogContent>
         </Dialog>
+        <p className="mt-4 text-xs leading-5 text-design-gray">
+          Your PDF is stored so you can retry and edit later. Its text is sent
+          to Together AI through Helicone to generate your draft. Deleting the
+          resume removes both the uploaded PDF and generated resume data.
+        </p>
       </div>
       <div className="font-mono">
         <div className="relative">
@@ -172,6 +214,35 @@ export default function UploadPageClient() {
           )}
         </div>
       </div>
+
+      <AlertDialog
+        open={showDeleteConfirmation}
+        onOpenChange={setShowDeleteConfirmation}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this resume?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently deletes the uploaded PDF and resume data. A
+              published website will no longer be available.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteResumeMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(event) => {
+                event.preventDefault();
+                handleDeleteResume();
+              }}
+              disabled={deleteResumeMutation.isPending}
+            >
+              {deleteResumeMutation.isPending ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

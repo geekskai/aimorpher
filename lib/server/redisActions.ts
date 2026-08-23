@@ -66,6 +66,15 @@ export async function storeResume(
   }
 }
 
+export async function deleteResume(userId: string): Promise<void> {
+  try {
+    await upstashRedis.del(`${REDIS_KEYS.RESUME_PREFIX}${userId}`);
+  } catch (error) {
+    console.error('Error deleting resume:', error);
+    throw new Error('Failed to delete resume');
+  }
+}
+
 /**
  * Create a new user with bidirectional lookup
  * @param userId Unique user identifier

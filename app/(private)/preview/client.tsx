@@ -173,6 +173,10 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
           initialUsername={usernameQuery.data.username}
           status={resumeQuery.data?.resume?.status}
           onStatusChange={async (newStatus) => {
+            if (newStatus === 'live' && hasUnsavedChanges) {
+              toast.error('Save your changes before publishing');
+              return;
+            }
             await toggleStatusMutation.mutateAsync(newStatus);
             const isFirstTime =
               typeof window !== 'undefined' &&
@@ -190,6 +194,9 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
             }
           }}
           isChangingStatus={toggleStatusMutation.isPending}
+          isPublishBlocked={
+            hasUnsavedChanges || saveResumeDataMutation.isPending
+          }
         />
       </div>
 

@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { getResume, storeResume } from '../../../lib/server/redisActions';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-import LoadingFallback from '../../../components/LoadingFallback';
+import ProcessingStatus from '@/components/ProcessingStatus';
 import { scrapePdfContent } from '@/lib/server/scrapePdfContent';
 import { deleteR2File } from '@/lib/server/deleteR2File';
 
@@ -51,9 +51,7 @@ export default async function Pdf() {
   return (
     <>
       <Suspense
-        fallback={
-          <LoadingFallback message="Reading your resume carefully..." />
-        }
+        fallback={<ProcessingStatus initialStage="read" />}
       >
         <PdfProcessing userId={userId} />
       </Suspense>

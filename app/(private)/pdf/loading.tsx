@@ -1,5 +1,5 @@
-import LoadingFallback from '@/components/LoadingFallback';
+import ProcessingStatus from '@/components/ProcessingStatus';
 
 export default function LoadingPreview() {
-  return <LoadingFallback message="" />;
+  return <ProcessingStatus initialStage="read" />;
 }

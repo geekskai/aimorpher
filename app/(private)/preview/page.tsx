@@ -9,7 +9,7 @@ import {
 import { generateResumeObject } from '@/lib/server/ai/generateResumeObject';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-import LoadingFallback from '../../../components/LoadingFallback';
+import ProcessingStatus from '@/components/ProcessingStatus';
 import { MAX_USERNAME_LENGTH } from '@/lib/config';
 import { currentUser } from '@clerk/nextjs/server';
 
@@ -21,8 +21,9 @@ async function LLMProcessing({ userId }: { userId: string }) {
   if (!resume?.fileContent || !resume.file) redirect('/upload');
 
   let messageTip: string | undefined;
+  let resumeData = resume.resumeData;
 
-  if (!resume.resumeData) {
+  if (!resumeData) {
     let resumeObject = await generateResumeObject(resume?.fileContent);
 
     if (!resumeObject) {
@@ -47,7 +48,7 @@ async function LLMProcessing({ userId }: { userId: string }) {
       ...resume,
       resumeData: resumeObject,
     });
-    resume.resumeData = resumeObject;
+    resumeData = resumeObject;
   }
 
   // we set the username only if it wasn't already set for this user meaning it's new user
@@ -63,7 +64,7 @@ async function LLMProcessing({ userId }: { userId: string }) {
   if (!foundUsername) {
     const username =
       (
-        (resume.resumeData.header.name || 'user')
+        (resumeData.header.name || 'user')
           .toLowerCase()
           .replace(/[^a-z0-9\s]/g, '')
           .replace(/\s+/g, '-') + '-'
@@ -88,9 +89,7 @@ export default async function Preview() {
   return (
     <>
       <Suspense
-        fallback={
-          <LoadingFallback message="Creating your personal website..." />
-        }
+        fallback={<ProcessingStatus initialStage="generate" />}
       >
         <LLMProcessing userId={userId} />
       </Suspense>

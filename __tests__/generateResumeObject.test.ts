@@ -1,79 +1,59 @@
-import { describe, it, expect } from 'vitest'
-import { generateResumeObject } from '@/lib/server/ai/generateResumeObject'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { generateObject } from 'ai';
+import { generateResumeObject } from '@/lib/server/ai/generateResumeObject';
+
+vi.mock('ai', () => ({
+  generateObject: vi.fn(),
+}));
+
+vi.mock('@ai-sdk/togetherai', () => ({
+  createTogetherAI: () => () => 'mock-model',
+}));
+
+const generatedResume = {
+  header: {
+    name: 'John Doe',
+    shortAbout: 'Software engineer',
+    location: 'New York, USA',
+    contacts: {},
+    skills: ['TypeScript'],
+  },
+  summary: 'Experienced software engineer.',
+  workExperience: [],
+  education: [],
+};
 
 describe('generateResumeObject', () => {
-  const hasApiKeys = process.env.TOGETHER_API_KEY && process.env.HELICONE_API_KEY
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
 
-  it('should handle empty resume text', async () => {
-    const result = await generateResumeObject('')
-    // AI can still process empty text and return a basic structure
-    expect(result).toBeDefined()
-    expect(typeof result).toBe('object')
-  }, 10000)
+  afterEach(() => vi.restoreAllMocks());
 
-  it('should handle invalid resume text', async () => {
-    const result = await generateResumeObject('invalid text that cannot be parsed')
-    // AI can still attempt to structure even invalid text
-    expect(result).toBeDefined()
-    expect(typeof result).toBe('object')
-  }, 10000)
+  it('returns validated structured resume data', async () => {
+    vi.mocked(generateObject).mockResolvedValue({
+      object: generatedResume,
+    } as never);
 
-  it('should accept resume text as parameter', async () => {
-    const sampleText = 'John Doe\nSoftware Engineer\nNew York, NY'
-    const result = await generateResumeObject(sampleText)
-    // AI successfully processes the text and returns structured data
-    expect(result).toBeDefined()
-    expect(typeof result).toBe('object')
-    expect(result).toHaveProperty('header')
-    expect(result).toHaveProperty('summary')
-    expect(result).toHaveProperty('workExperience')
-    expect(result).toHaveProperty('education')
-    expect(result?.header?.name).toContain('John Doe')
-  }, 10000)
+    const result = await generateResumeObject(
+      'John Doe\nSoftware Engineer\nNew York, USA',
+    );
 
-  it('should return structured data when AI processing succeeds', async () => {
-    // Test with text that the AI can structure
-    const result = await generateResumeObject('random meaningless text that cannot be structured')
-    // AI still attempts to structure the text
-    expect(result).toBeDefined()
-    expect(typeof result).toBe('object')
-    expect(result).toHaveProperty('header')
-    expect(result).toHaveProperty('summary')
-  }, 10000)
+    expect(result).toEqual(generatedResume);
+    expect(generateObject).toHaveBeenCalledOnce();
+  });
 
-  // Only run this test if API keys are available
-  ;(hasApiKeys ? it : it.skip)('should successfully process resume text with API keys', async () => {
-    const sampleResumeText = `John Smith
-Software Engineer
-San Francisco, CA
+  it('returns undefined when the provider fails', async () => {
+    vi.mocked(generateObject).mockRejectedValue(new Error('Provider error'));
 
-Professional Summary:
-Experienced software engineer with 5+ years in full-stack development, specializing in React, Node.js, and cloud technologies.
+    await expect(generateResumeObject('John Doe')).resolves.toBeUndefined();
+  });
 
-Work Experience:
-Senior Software Engineer at Tech Corp (2020-Present)
-- Led development of microservices architecture serving 1M+ users
-- Implemented CI/CD pipelines reducing deployment time by 60%
-- Mentored junior developers and conducted code reviews
+  it('returns undefined when generated data does not match the schema', async () => {
+    vi.mocked(generateObject).mockResolvedValue({ object: {} } as never);
 
-Education:
-Bachelor of Science in Computer Science
-University of California, Berkeley (2014-2018)
-
-Skills:
-JavaScript, TypeScript, React, Node.js, Python`
-
-    const result = await generateResumeObject(sampleResumeText)
-
-    // With API keys, it should return a structured object or undefined if processing fails
-    expect(result).toBeDefined()
-    expect(typeof result).toBe('object')
-
-    if (result) {
-      expect(result).toHaveProperty('header')
-      expect(result).toHaveProperty('summary')
-      expect(result).toHaveProperty('workExperience')
-      expect(result).toHaveProperty('education')
-    }
-  }, 30000) // 30 second timeout for AI processing
-})
+    await expect(generateResumeObject('John Doe')).resolves.toBeUndefined();
+  });
+});
